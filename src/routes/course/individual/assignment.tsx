@@ -4,8 +4,8 @@ import { fetch } from "@tauri-apps/api/http";
 
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
+import process from "../../../../utils/htmlProcessor";
 import { Skeleton, Menu, Divider, Empty, Typography } from "antd";
-import DOMPurify from "isomorphic-dompurify";
 
 const { Text, Title } = Typography
 
@@ -51,40 +51,32 @@ export default function Assignment() {
             <Center height="46.73px">
               <Text style={{ marginRight: "10px" }}>
                 <span style={{ color: "gray" }}>Due on:</span>&nbsp;
-                {new Date(Date.parse(data.due_at)).toLocaleString(
-                  "en-US",
-                  {
-                    weekday: "short",
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "numeric",
-                  }
-                )}
+                {new Date(Date.parse(data.due_at)).toLocaleString("en-US", {
+                  weekday: "short",
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric",
+                  hour: "numeric",
+                  minute: "numeric",
+                })}
               </Text>
             </Center>
           </div>
           <Text style={{ color: "gray" }}>
-            {new Date(Date.parse(data.created_at)).toLocaleString(
-              "en-US",
-              {
-                weekday: "short",
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-              }
-            )}
+            {new Date(Date.parse(data.created_at)).toLocaleString("en-US", {
+              weekday: "short",
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            })}
           </Text>
           <Divider />
           {data.description != "" ? (
             <div
               dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(data.description, {
-                  USE_PROFILES: { html: true },
-                }),
+                __html: process(data.description),
               }}
             ></div>
           ) : (

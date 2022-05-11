@@ -32,8 +32,9 @@ interface Module {
 }
 
 export default function Modules() {
-  const { course } = useParams();
+  const { course, module } = useParams();
   const [data, setData] = useState<Module[]>();
+
 
   useEffect(() => {
     fetch(
@@ -51,10 +52,12 @@ export default function Modules() {
     });
   }, []);
 
+  console.log([module ? module : ""]);
+
   return (
     <Main>
       {data ? (
-        <Menu mode="inline">
+        <Menu mode="inline" defaultOpenKeys={[module ? module : ""]}>
           {data.map((module: Module) => (
             <SubMenu key={module.id} title={module.name}>
               {module.items.map((item: Item) => {
@@ -68,6 +71,7 @@ export default function Modules() {
                       indent={item.indent}
                       url={`/${course}/assignment/${item.content_id}`}
                       id={item.id}
+                      key={item.id}
                     />
                   );
                 } else if (item.type == "File") {
@@ -78,17 +82,26 @@ export default function Modules() {
                       indent={item.indent}
                       url={`/${course}/file/${item.content_id}`}
                       id={item.id}
+                      key={item.id}
                     />
                   );
                 } else if (item.type == "ExternalUrl") {
                   return (
-                    <Item
-                      icon={faLink}
-                      name={item.title}
-                      indent={item.indent}
-                      url={item.external_url}
-                      id={item.id}
-                    />
+                    <Menu.Item
+                      key={item.id}
+                      style={{ paddingLeft: `${24 * item.indent + 48}px` }}
+                    >
+                      <a href={item.external_url} target="_blank">
+                        <div>
+                          <FontAwesomeIcon
+                            icon={faLink}
+                            color="white"
+                            style={{ paddingRight: "8px" }}
+                          />
+                          {item.title}
+                        </div>
+                      </a>
+                    </Menu.Item>
                   );
                 } else if (item.type == "Page") {
                   return (
@@ -98,6 +111,7 @@ export default function Modules() {
                       indent={item.indent}
                       url={`/${course}/page/${item.page_url}`}
                       id={item.id}
+                      key={item.id}
                     />
                   );
                 } else {

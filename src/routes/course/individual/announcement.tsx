@@ -4,9 +4,9 @@ import { fetch } from "@tauri-apps/api/http";
 
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
+import process from "../../../../utils/htmlProcessor";
 import { Skeleton, Menu, Divider, Avatar, Typography } from "antd";
 import { Link } from "react-router-dom";
-import DOMPurify from "isomorphic-dompurify";
 
 const { Text, Title } = Typography
 
@@ -57,24 +57,19 @@ export default function Assignments() {
             </Center>
           </div>
           <Text style={{ color: "gray" }}>
-            {new Date(Date.parse(data.posted_at)).toLocaleString(
-              "en-US",
-              {
-                weekday: "short",
-                year: "numeric",
-                month: "short",
-                day: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-              }
-            )}
+            {new Date(Date.parse(data.posted_at)).toLocaleString("en-US", {
+              weekday: "short",
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+            })}
           </Text>
           <Divider />
           <div
             dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(data.message, {
-                USE_PROFILES: { html: true },
-              }),
+              __html: process(data.message),
             }}
           ></div>
         </div>

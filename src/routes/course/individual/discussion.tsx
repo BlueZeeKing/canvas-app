@@ -4,8 +4,8 @@ import { fetch, Body } from "@tauri-apps/api/http";
 
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
+import process from "../../../../utils/htmlProcessor";
 import { Skeleton, Avatar, Divider, Tooltip, Typography, Comment } from "antd";
-import DOMPurify from "isomorphic-dompurify";
 import { LikeOutlined, LikeFilled } from "@ant-design/icons";
 
 const { Text, Title } = Typography
@@ -138,9 +138,7 @@ export default function Discussion() {
           <Divider />
           <div
             dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(data.message, {
-                USE_PROFILES: { html: true },
-              }),
+              __html: process(data.message),
             }}
           ></div>
           <Divider />
@@ -166,9 +164,7 @@ export default function Discussion() {
                 content={
                   <div
                     dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(item.text, {
-                        USE_PROFILES: { html: true },
-                      }),
+                      __html: process(item.text),
                     }}
                   ></div>
                 }

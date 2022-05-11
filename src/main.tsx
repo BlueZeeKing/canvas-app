@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 
 import './index.css'
-import 'antd/dist/antd.dark.css';
+import "antd/dist/antd.dark.min.css";
 import App from "./App";
 
 import Wiki from "./routes/course/wiki";
@@ -23,22 +23,23 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/l
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />} />
 
-        <Route path="/:course/wiki" element={<Wiki />} />
-        <Route path="/:course/modules" element={<Modules />} />
-        <Route path="/:course/assignments" element={<Assignments />} />
-        <Route path="/:course/discussions" element={<Discussions />} />
-        <Route path="/:course/announcements" element={<Announcements />} />
+          <Route path="/:course/wiki" element={<Wiki />} />
+          <Route path="/:course/modules" element={<Modules />} />
+          <Route path="/:course/modules/:module" element={<Modules />} />
+          <Route path="/:course/assignments" element={<Assignments />} />
+          <Route path="/:course/discussions" element={<Discussions />} />
+          <Route path="/:course/announcements" element={<Announcements />} />
 
-        <Route path="/:course/announcement/:announcement" element={<Announcement />} />
-        <Route path="/:course/assignment/:assignment" element={<Assignment />} />
-        <Route path="/:course/discussion/:discussion" element={<Discussion />} />
-        <Route path="/:course/page/:page" element={<Page />} />
-        <Route path="/:course/file/:file" element={<File />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="/:course/announcement/:announcement" element={<Announcement />} />
+          <Route path="/:course/assignment/:assignment" element={<Assignment />} />
+          <Route path="/:course/discussion/:discussion" element={<Discussion />} />
+          <Route path="/:course/page/:page" element={<Page />} />
+          <Route path="/:course/file/:file" element={<File />} />
+        </Routes>
+      </BrowserRouter>
   </React.StrictMode>
 );

@@ -8,7 +8,6 @@ import axios from "axios";
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
 import { Skeleton, Menu, Divider, Empty, Typography } from "antd";
-import DOMPurify from "isomorphic-dompurify";
 import { Document, Page } from "react-pdf";
 
 const { Text, Title } = Typography

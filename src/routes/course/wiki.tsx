@@ -1,9 +1,9 @@
 import { useParams } from "react-router"
 import { useState, useEffect } from "react"
-import DOMPurify from "isomorphic-dompurify";
 import { fetch } from "@tauri-apps/api/http";
 
 import Main from "../../../components/Main";
+import process from "../../../utils/htmlProcessor";
 import { Layout, Skeleton } from "antd";
 
 export default function Wiki() {
@@ -30,9 +30,7 @@ export default function Wiki() {
       {data ? (
         <div
           dangerouslySetInnerHTML={{
-            __html: DOMPurify.sanitize(data, {
-              USE_PROFILES: { html: true },
-            }),
+            __html: process(data),
           }}
         ></div>
       ) : (

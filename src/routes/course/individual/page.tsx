@@ -5,7 +5,7 @@ import { fetch } from "@tauri-apps/api/http";
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
 import { Skeleton, Menu, Divider, Empty, Typography } from "antd";
-import DOMPurify from "isomorphic-dompurify";
+import process from "../../../../utils/htmlProcessor";
 
 const { Text, Title } = Typography
 
@@ -64,9 +64,7 @@ export default function Page() {
           <Divider />
           <div
             dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(data.body, {
-                USE_PROFILES: { html: true },
-              }),
+              __html: process(data.body),
             }}
           ></div>
         </div>
