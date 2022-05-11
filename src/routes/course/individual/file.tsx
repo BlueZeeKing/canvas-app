@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import * as http from "@tauri-apps/api/http";
 import { save } from "@tauri-apps/api/dialog"
 import { writeBinaryFile } from "@tauri-apps/api/fs";
-import axios from "axios";
 
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
