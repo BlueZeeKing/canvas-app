@@ -1,7 +1,9 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
-import { fetch } from "@tauri-apps/api/http";
+import * as http from "@tauri-apps/api/http";
 import { save } from "@tauri-apps/api/dialog"
+import { writeBinaryFile } from "@tauri-apps/api/fs";
+import axios from "axios";
 
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
@@ -33,7 +35,7 @@ export default function File() {
   console.log(useParams());
 
   useEffect(() => {
-    fetch(`https://apsva.instructure.com/api/v1/files/${file}`, {
+    http.fetch(`https://apsva.instructure.com/api/v1/files/${file}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
@@ -43,7 +45,7 @@ export default function File() {
       setData(body.data);
       console.log(body.data);
     });
-    fetch(`https://apsva.instructure.com/api/v1/files/${file}/public_url`, {
+    http.fetch(`https://apsva.instructure.com/api/v1/files/${file}/public_url`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
@@ -80,7 +82,9 @@ export default function File() {
             <div style={{ flexGrow: 1 }}></div>
             <Center height="46.73px">
               <a onClick={() => {
-                save().then((path) => console.log(path))
+                save({defaultPath: data.display_name}).then((path) => {
+                  fetch(url).then(res => res.arrayBuffer()).then(file => writeBinaryFile({path: path, contents: new Uint8Array(file)}))
+                })
               }}>Click to download</a>
             </Center>
           </div>
