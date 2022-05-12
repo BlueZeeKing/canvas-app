@@ -7,8 +7,11 @@ import { fetch } from "@tauri-apps/api/http"
 const { Sider } = Layout;
 
 export default function Sidebar() {
-  const [data, setData] = useState<Array<any>>();
   const { course } = useParams();
+  
+  // @ts-expect-error
+  const [data, setData] = useState<Array<any>>(course && window.localStorage.getItem(course) ? JSON.parse(window.localStorage.getItem(course)).data : []);
+  console.log(data)
 
   useEffect(() => {
     if (course && window.localStorage.getItem(course)) {
