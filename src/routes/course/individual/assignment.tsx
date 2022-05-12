@@ -6,6 +6,7 @@ import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
 import process from "../../../../utils/htmlProcessor";
 import { Skeleton, Menu, Divider, Empty, Typography } from "antd";
+import setItem from "../../../../utils/breadcrumb";
 
 const { Text, Title } = Typography
 
@@ -26,6 +27,7 @@ export default function Assignment() {
   const [data, setData] = useState<Assignment>();
 
   useEffect(() => {
+    setItem(3, "Assignment", `/${course}/assignment/${assignment}`);
     fetch(
       `https://apsva.instructure.com/api/v1/courses/${course}/assignments/${assignment}`,
       {
@@ -37,7 +39,8 @@ export default function Assignment() {
     ).then((body) => {
       // @ts-expect-error
       setData(body.data);
-      console.log(body.data);
+      // @ts-expect-error
+      setItem(3, body.data.name, `/${course}/assignment/${assignment}`);
     });
   }, []);
 

@@ -3,6 +3,7 @@ import { useState, useEffect } from "react"
 import { fetch } from "@tauri-apps/api/http";
 
 import Main from "../../../components/Main";
+import setItem from "../../../utils/breadcrumb";
 import { Skeleton, Menu } from "antd";
 import { Link } from "react-router-dom";
 
@@ -14,6 +15,8 @@ interface Discussion {
 export default function Announcements() {
   const { course } = useParams();
   const [data, setData] = useState<Discussion[]>();
+
+  setItem(2, "Announcements", `/${course}/announcements`);
 
   useEffect(() => {
     fetch(
@@ -27,7 +30,6 @@ export default function Announcements() {
     ).then((body) => {
       // @ts-expect-error
       setData(body.data);
-      console.log(body.data);
     });
   }, []);
 

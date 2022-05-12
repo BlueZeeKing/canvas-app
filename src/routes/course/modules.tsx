@@ -9,6 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 import Main from "../../../components/Main";
+import setItem from "../../../utils/breadcrumb";
 import { Skeleton, Menu } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
@@ -35,6 +36,7 @@ export default function Modules() {
   const { course, module } = useParams();
   const [data, setData] = useState<Module[]>();
 
+  setItem(2, "Modules", `/${course}/modules`);
 
   useEffect(() => {
     fetch(
@@ -48,11 +50,8 @@ export default function Modules() {
     ).then((body) => {
       // @ts-expect-error
       setData(body.data);
-      console.log(body.data)
     });
   }, []);
-
-  console.log([module ? module : ""]);
 
   return (
     <Main>

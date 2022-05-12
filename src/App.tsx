@@ -1,21 +1,24 @@
 import { useState, useEffect } from 'react'
 import { fetch } from '@tauri-apps/api/http';
 import { Typography, Card, Skeleton, Layout, Button } from "antd";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import TopBar from "../components/TopBar";
+import setIndex from "../utils/breadcrumb";
 
 interface Item {
-  name: string
-  is_favorite: boolean
-  course_code: string
-  id: number
+  name: string;
+  is_favorite: boolean;
+  course_code: string;
+  id: number;
+  default_view: string;
 }
 
 const { Content } = Layout;
 
 function App() {
   const [data, setData] = useState<Array<Item>>()
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch(
@@ -35,19 +38,28 @@ function App() {
   return (
     <Layout>
       <TopBar title="Canvas" />
-      <Content className="flex flex-row flex-wrap p-1 !min-h-screen">
+      <Content className="flex flex-row flex-wrap p-3 !min-h-screen overflow-x-hidden">
         {data ? (
           data
             .filter((a) => a.is_favorite)
             .map((item: Item) => (
-              <Link to={`/${item.id}/wiki`} key={item.id}>
-                <Card title={item.name} className="w-72 h-40 !m-3">
-                  <p>{item.course_code}</p>
-                </Card>
-              </Link>
+              <Card onClick={() => {
+                if (item.default_view == "wiki") {
+                  setIndex(1, item.name, `/${item.id}/wiki`);
+                  navigate(`/${item.id}/wiki`);
+                } else if (item.default_view == "modules") {
+                  setIndex(1, item.name, `/${item.id}/modules`);
+                  navigate(`/${item.id}/modules`);
+                } else if (item.default_view == "assignments") {
+                  setIndex(1, item.name, `/${item.id}/assignments`);
+                  navigate(`/${item.id}/assignments`);
+                }
+              }} key={item.id} title={item.name} className="w-72 h-40 !m-3 cursor-pointer">
+                <p>{item.course_code}</p>
+              </Card>
             ))
         ) : (
-          <Skeleton />
+          <Skeleton style={{width: "100%"}} />
         )}
       </Content>
     </Layout>

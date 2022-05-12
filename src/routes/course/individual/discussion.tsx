@@ -7,6 +7,7 @@ import Center from "../../../../components/Center";
 import process from "../../../../utils/htmlProcessor";
 import { Skeleton, Avatar, Divider, Tooltip, Typography, Comment } from "antd";
 import { LikeOutlined, LikeFilled } from "@ant-design/icons";
+import setItem from "../../../../utils/breadcrumb";
 
 const { Text, Title } = Typography
 
@@ -44,6 +45,7 @@ export default function Discussion() {
   const [entries, setEntries] = useState<Entry[]>([]);
 
   useEffect(() => {
+    setItem(3, "Discussion", `/${course}/discussion/${discussion}`);
     fetch(
       `https://apsva.instructure.com/api/v1/courses/${course}/discussion_topics/${discussion}`,
       {
@@ -55,7 +57,8 @@ export default function Discussion() {
     ).then((body) => {
       // @ts-expect-error
       setData(body.data);
-      console.log(body.data);
+      // @ts-expect-error
+      setItem(3, body.data.title, `/${course}/discussion/${discussion}`);
     });
 
     fetch(
@@ -77,7 +80,6 @@ export default function Discussion() {
           my_rating: body.data.entry_ratings[item.id],
         };
       }));
-      console.log(body.data);
     });
   }, []);
 
@@ -101,13 +103,10 @@ export default function Discussion() {
         },
         body: Body.form({ rating: entry.my_rating.toString() }),
       }
-    ).then((res) => console.log(res.status));
+    )
 
-    console.log(copy)
     setEntries(copy)
   }
-
-  console.log(entries)
 
   return (
     <Main>

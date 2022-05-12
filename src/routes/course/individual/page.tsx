@@ -3,9 +3,9 @@ import { useState, useEffect } from "react";
 import { fetch } from "@tauri-apps/api/http";
 
 import Main from "../../../../components/Main";
-import Center from "../../../../components/Center";
 import { Skeleton, Menu, Divider, Empty, Typography } from "antd";
 import process from "../../../../utils/htmlProcessor";
+import setItem from "../../../../utils/breadcrumb";
 
 const { Text, Title } = Typography
 
@@ -25,9 +25,8 @@ export default function Page() {
   const { course, page } = useParams();
   const [data, setData] = useState<Assignment>();
 
-  console.log(useParams());
-
   useEffect(() => {
+    setItem(3, "Page", `/${course}/page/${page}`);
     fetch(
       `https://apsva.instructure.com/api/v1/courses/${course}/pages/${page}`,
       {
@@ -39,7 +38,8 @@ export default function Page() {
     ).then((body) => {
       // @ts-expect-error
       setData(body.data);
-      console.log(body.data);
+      // @ts-expect-error
+      setItem(3, body.data.title, `/${course}/page/${page}`);
     });
   }, []);
 

@@ -7,6 +7,7 @@ import Center from "../../../../components/Center";
 import process from "../../../../utils/htmlProcessor";
 import { Skeleton, Menu, Divider, Avatar, Typography } from "antd";
 import { Link } from "react-router-dom";
+import setItem from "../../../../utils/breadcrumb";
 
 const { Text, Title } = Typography
 
@@ -20,11 +21,12 @@ interface Announcement {
   message: string;
 }
 
-export default function Assignments() {
+export default function Announcements() {
   const { course, announcement } = useParams();
   const [data, setData] = useState<Announcement>();
 
   useEffect(() => {
+    setItem(3, "Announcement", `/${course}/announcement/${announcement}`);
     fetch(
       `https://apsva.instructure.com/api/v1/courses/${course}/discussion_topics/${announcement}`,
       {
@@ -36,7 +38,8 @@ export default function Assignments() {
     ).then((body) => {
       // @ts-expect-error
       setData(body.data);
-      console.log(body.data);
+      // @ts-expect-error
+      setItem(3, body.data.title, `/${course}/announcement/${announcement}`);
     });
   }, []);
 

@@ -8,6 +8,7 @@ import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
 import { Skeleton, Menu, Divider, Empty, Typography } from "antd";
 import { Document, Page } from "react-pdf";
+import setItem from "../../../../utils/breadcrumb";
 
 const { Text, Title } = Typography
 
@@ -30,9 +31,8 @@ export default function File() {
   const [url, setUrl] = useState("");
   const [numPages, setNumPages] = useState(0);
 
-  console.log(useParams());
-
   useEffect(() => {
+    setItem(3, "File", `/${course}/file/${file}`);
     http.fetch(`https://apsva.instructure.com/api/v1/files/${file}`, {
       method: "GET",
       headers: {
@@ -41,7 +41,8 @@ export default function File() {
     }).then((body) => {
       // @ts-expect-error
       setData(body.data);
-      console.log(body.data);
+      // @ts-expect-error
+      setItem(3, body.data.display_name, `/${course}/file/${file}`);
     });
     http.fetch(`https://apsva.instructure.com/api/v1/files/${file}/public_url`, {
       method: "GET",
@@ -51,7 +52,6 @@ export default function File() {
     }).then((body) => {
       // @ts-expect-error
       setUrl(body.data.public_url);
-      console.log(body.data);
     });
   }, []);
 
@@ -115,7 +115,7 @@ export default function File() {
                   <Page
                     onLoadSuccess={removeTextLayerOffset}
                     pageNumber={index + 1}
-                    className="page-padding"
+                    className="m-1"
                   />
                 )
               )}

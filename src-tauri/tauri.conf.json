@@ -25,6 +25,9 @@
       },
       "fs": {
         "writeFile": true
+      },
+      "shell": {
+        "open": true
       }
     },
     "bundle": {
