@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { fetch } from '@tauri-apps/api/http';
-import { Typography, Card, Skeleton, Layout, Button } from "antd";
+import { Typography, Card, Skeleton, Layout, notification } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 
 import TopBar from "../components/TopBar";
@@ -12,6 +12,7 @@ interface Item {
   course_code: string;
   id: number;
   default_view: string;
+  public_description: string;
 }
 
 const { Content } = Layout;
@@ -22,7 +23,7 @@ function App() {
 
   useEffect(() => {
     fetch(
-      "https://apsva.instructure.com/api/v1/courses?per_page=50&enrollment_state=active&state=available&include=favorites",
+      "https://apsva.instructure.com/api/v1/courses?per_page=50&enrollment_state=active&state=available&include[]=public_description&include[]=favorites",
       {
         method: "GET",
         headers: {
@@ -30,8 +31,17 @@ function App() {
         },
       }
     ).then((body) => {
-      // @ts-expect-error
-      setData(body.data);
+      if (body.ok) {
+        // @ts-expect-error
+        setData(body.data);
+      } else {
+        notification.error({
+          message: `Error: ${body.status}`,
+          // @ts-expect-error
+          description: `An error occurred while fetching the data: ${body.data.error}`,
+        });
+      }
+      console.log(body);
     });
   }, [])
 
@@ -55,7 +65,7 @@ function App() {
                   navigate(`/${item.id}/assignments`);
                 }
               }} key={item.id} title={item.name} className="w-72 h-40 !m-3 cursor-pointer">
-                <p>{item.course_code}</p>
+                <p>{!item.public_description || item.public_description == "" ? item.course_code : item.public_description}</p>
               </Card>
             ))
         ) : (

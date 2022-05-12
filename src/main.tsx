@@ -1,25 +1,36 @@
-import React from 'react'
+import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom/client'
 
 import './index.css'
-import "antd/dist/antd.dark.min.css";
 import App from "./App";
 
-import Wiki from "./routes/course/wiki";
-import Modules from "./routes/course/modules";
-import Assignments from "./routes/course/assignments";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Discussions from './routes/course/discussions';
-import Announcements from './routes/course/announcements';
-import Announcement from "./routes/course/individual/announcement";
-import Assignment from "./routes/course/individual/assignment";
-import Discussion from "./routes/course/individual/discussion";
-import Page from "./routes/course/individual/page";
-import File from "./routes/course/individual/file";
+const Wiki = React.lazy(() => import("./routes/course/wiki"));
+const Modules = React.lazy(() => import("./routes/course/modules"));
+const Assignments = React.lazy(() => import("./routes/course/assignments"));
+const Discussions = React.lazy(() => import('./routes/course/discussions'));
+const Announcements = React.lazy(() => import('./routes/course/announcements'));
+const Announcement = React.lazy(() => import("./routes/course/individual/announcement"));
+const Assignment = React.lazy(() => import("./routes/course/individual/assignment"));
+const Discussion = React.lazy(() => import("./routes/course/individual/discussion"));
+const Page = React.lazy(() => import("./routes/course/individual/page"));
+const File = React.lazy(() => import("./routes/course/individual/file"));
 
-import { pdfjs } from "react-pdf";
-pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.js`;
+import TopBar from "../components/TopBar";
+
+import { Empty, Layout, Spin } from "antd";
+
+const { Content } = Layout;
+
+async function asyncImports() {
+  await import("antd/dist/antd.dark.min.css");
+  const { pdfjs } = await import("react-pdf")
+  
+  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.js`;
+}
+
+asyncImports();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
@@ -27,19 +38,40 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <Routes>
           <Route path="/" element={<App />} />
 
-          <Route path="/:course/wiki" element={<Wiki />} />
-          <Route path="/:course/modules" element={<Modules />} />
-          <Route path="/:course/modules/:module" element={<Modules />} />
-          <Route path="/:course/assignments" element={<Assignments />} />
-          <Route path="/:course/discussions" element={<Discussions />} />
-          <Route path="/:course/announcements" element={<Announcements />} />
+          <Route path="/:course/wiki" element={<Suspense fallback={<Spin />} ><Wiki /></Suspense>} />
+          <Route path="/:course/modules" element={<Suspense fallback={<Spin />} ><Modules /></Suspense>} />
+          <Route path="/:course/modules/:module" element={<Suspense fallback={<Spin />} ><Modules /></Suspense>} />
+          <Route path="/:course/assignments" element={<Suspense fallback={<Spin />} ><Assignments /></Suspense>} />
+          <Route path="/:course/discussions" element={<Suspense fallback={<Spin />} ><Discussions /></Suspense>} />
+          <Route path="/:course/announcements" element={<Suspense fallback={<Spin />} ><Announcements /></Suspense>} />
 
-          <Route path="/:course/announcement/:announcement" element={<Announcement />} />
-          <Route path="/:course/assignment/:assignment" element={<Assignment />} />
-          <Route path="/:course/discussion/:discussion" element={<Discussion />} />
-          <Route path="/:course/page/:page" element={<Page />} />
-          <Route path="/:course/file/:file" element={<File />} />
+          <Route path="/:course/announcement/:announcement" element={<Suspense fallback={<Spin />} ><Announcement /></Suspense>} />
+          <Route path="/:course/assignment/:assignment" element={<Suspense fallback={<Spin />} ><Assignment /></Suspense>} />
+          <Route path="/:course/discussion/:discussion" element={<Suspense fallback={<Spin />} ><Discussion /></Suspense>} />
+          <Route path="/:course/page/:page" element={<Suspense fallback={<Spin />} ><Page /></Suspense>} />
+          <Route path="/:course/file/:file" element={<Suspense fallback={<Spin />} ><File /></Suspense>} />
+
+          <Route path="*" element={<Error />} />
         </Routes>
       </BrowserRouter>
   </React.StrictMode>
 );
+
+function Error() {
+  return (
+    <Layout>
+      <TopBar title="Canvas" />
+      <Content className="p-3 !min-h-screen overflow-x-hidden">
+        <Empty
+          description={
+            <>
+              <span>404</span>
+              <br></br>
+              <Link to="/">Return to home page</Link>
+            </>
+          }
+        ></Empty>
+      </Content>
+    </Layout>
+  );
+}

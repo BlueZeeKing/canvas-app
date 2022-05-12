@@ -5,10 +5,15 @@ import { fetch } from "@tauri-apps/api/http";
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
 import process from "../../../../utils/htmlProcessor";
-import { Skeleton, Menu, Divider, Empty, Typography } from "antd";
+import { Skeleton, Menu, Divider, Empty, Typography, Steps } from "antd";
 import setItem from "../../../../utils/breadcrumb";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+import { faCloudArrowUp, faPaperPlane, faComment } from "@fortawesome/free-solid-svg-icons";
+
 const { Text, Title } = Typography
+const { Step } = Steps;
 
 interface Assignment {
   author: {
@@ -20,6 +25,9 @@ interface Assignment {
   name: string;
   description: string;
   due_at: string;
+  submission: {
+    workflow_state: string
+  }
 }
 
 export default function Assignment() {
@@ -29,7 +37,7 @@ export default function Assignment() {
   useEffect(() => {
     setItem(3, "Assignment", `/${course}/assignment/${assignment}`);
     fetch(
-      `https://apsva.instructure.com/api/v1/courses/${course}/assignments/${assignment}`,
+      `https://apsva.instructure.com/api/v1/courses/${course}/assignments/${assignment}?include=submission`,
       {
         method: "GET",
         headers: {
@@ -41,6 +49,7 @@ export default function Assignment() {
       setData(body.data);
       // @ts-expect-error
       setItem(3, body.data.name, `/${course}/assignment/${assignment}`);
+      console.log(body);
     });
   }, []);
 
@@ -75,6 +84,12 @@ export default function Assignment() {
               minute: "numeric",
             })}
           </Text>
+          <Divider />
+          <Steps current={["unsubmitted", "uploaded", "submitted", "graded"].indexOf(data.submission.workflow_state)-1}>
+            <Step title="Uploaded" icon={<FontAwesomeIcon icon={faCloudArrowUp} />} />
+            <Step title="Submitted" icon={<FontAwesomeIcon icon={faPaperPlane} />} />
+            <Step title="Graded" icon={<FontAwesomeIcon icon={faComment} />} />
+          </Steps>
           <Divider />
           {data.description != "" ? (
             <div

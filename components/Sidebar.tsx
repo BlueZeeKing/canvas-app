@@ -71,6 +71,6 @@ function url(course: any, item: { id: string, full_url: string}) {
   } else if (item.id == "discussions") {
     return `/${course}/discussions`;
   } else {
-    return item.full_url;
+    return "/404";
   }
 }
