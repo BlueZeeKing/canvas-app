@@ -1,6 +1,5 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
-import { fetch } from "@tauri-apps/api/http";
 
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
@@ -8,6 +7,7 @@ import process from "../../../../utils/htmlProcessor";
 import { Skeleton, Menu, Divider, Avatar, Typography } from "antd";
 import { Link } from "react-router-dom";
 import setItem from "../../../../utils/breadcrumb";
+import useAPI from "../../../../utils/useAPI";
 
 const { Text, Title } = Typography
 
@@ -25,23 +25,13 @@ export default function Announcements() {
   const { course, announcement } = useParams();
   const [data, setData] = useState<Announcement>();
 
-  useEffect(() => {
-    setItem(3, "Announcement", `/${course}/announcement/${announcement}`);
-    fetch(
-      `https://apsva.instructure.com/api/v1/courses/${course}/discussion_topics/${announcement}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-        },
-      }
-    ).then((body) => {
-      // @ts-expect-error
-      setData(body.data);
-      // @ts-expect-error
-      setItem(3, body.data.title, `/${course}/announcement/${announcement}`);
-    });
-  }, []);
+  useAPI(
+    `https://apsva.instructure.com/api/v1/courses/${course}/discussion_topics/${announcement}`,
+    (body) => {
+      setData(body);
+      setItem(3, body.title, `/${course}/announcement/${announcement}`);
+    }
+  );
 
   return (
     <Main>

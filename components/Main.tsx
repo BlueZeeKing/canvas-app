@@ -23,11 +23,11 @@ export default function Main(props: { children: any }) {
     }
   }, [window.localStorage.getItem("breadcrumb")])
   return (
-    <Layout className="!min-h-screen">
+    <Layout className="h-screen">
       <TopBar title="Canvas" />
       <Layout className="h-full">
         <Sidebar />
-        <Content className="h-full p-3">
+        <Content className="h-full p-3 overflow-scroll">
           <Breadcrumb>
             {state.map((item) => <Breadcrumb.Item key={item.name}><Link to={item.url}>{item.name}</Link></Breadcrumb.Item>)}
           </Breadcrumb>

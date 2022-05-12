@@ -1,6 +1,6 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
-import { fetch, Body } from "@tauri-apps/api/http";
+import { Body, fetch } from "@tauri-apps/api/http"
 
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
@@ -8,6 +8,7 @@ import process from "../../../../utils/htmlProcessor";
 import { Skeleton, Avatar, Divider, Tooltip, Typography, Comment } from "antd";
 import { LikeOutlined, LikeFilled } from "@ant-design/icons";
 import setItem from "../../../../utils/breadcrumb";
+import useAPI from "../../../../utils/useAPI";
 
 const { Text, Title } = Typography
 
@@ -44,44 +45,35 @@ export default function Discussion() {
   const [data, setData] = useState<Discussion>();
   const [entries, setEntries] = useState<Entry[]>([]);
 
-  useEffect(() => {
-    setItem(3, "Discussion", `/${course}/discussion/${discussion}`);
-    fetch(
-      `https://apsva.instructure.com/api/v1/courses/${course}/discussion_topics/${discussion}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-        },
-      }
-    ).then((body) => {
-      // @ts-expect-error
-      setData(body.data);
-      // @ts-expect-error
-      setItem(3, body.data.title, `/${course}/discussion/${discussion}`);
-    });
+  setItem(3, "Discussion", `/${course}/discussion/${discussion}`);
 
-    fetch(
-      `https://apsva.instructure.com/api/v1/courses/${course}/discussion_topics/${discussion}/view`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-        },
-      }
-    ).then((body: any) => {
-      setEntries(body.data.view.map((item: any) => {
-        return {
-          author: body.data.participants.find((person: any) => person.id == item.user_id),
-          rating: item.rating_sum,
-          text: item.message,
-          date: item.updated_at,
-          id: item.id,
-          my_rating: body.data.entry_ratings[item.id],
-        };
-      }));
-    });
-  }, []);
+  useAPI(
+    `https://apsva.instructure.com/api/v1/courses/${course}/discussion_topics/${discussion}`,
+    (body) => {
+      setData(body);
+      setItem(3, body.title, `/${course}/discussion/${discussion}`);
+    }
+  );
+
+  useAPI(
+    `https://apsva.instructure.com/api/v1/courses/${course}/discussion_topics/${discussion}/view`,
+    (body) => {
+      setEntries(
+        body.view.map((item: any) => {
+          return {
+            author: body.participants.find(
+              (person: any) => person.id == item.user_id
+            ),
+            rating: item.rating_sum,
+            text: item.message,
+            date: item.updated_at,
+            id: item.id,
+            my_rating: body.entry_ratings[item.id],
+          };
+        })
+      );
+    }
+  );
 
   function setLikes(item: any, index: number) {
     let copy = JSON.parse(JSON.stringify(entries));

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
-import { fetch } from '@tauri-apps/api/http';
 import { Typography, Card, Skeleton, Layout, notification } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 
 import TopBar from "../components/TopBar";
 import setIndex from "../utils/breadcrumb";
+import useAPI from "../utils/useAPI";
 
 interface Item {
   name: string;
@@ -21,34 +21,15 @@ function App() {
   const [data, setData] = useState<Array<Item>>()
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch(
-      "https://apsva.instructure.com/api/v1/courses?per_page=50&enrollment_state=active&state=available&include[]=public_description&include[]=favorites",
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-        },
-      }
-    ).then((body) => {
-      if (body.ok) {
-        // @ts-expect-error
-        setData(body.data);
-      } else {
-        notification.error({
-          message: `Error: ${body.status}`,
-          // @ts-expect-error
-          description: `An error occurred while fetching the data: ${body.data.error}`,
-        });
-      }
-      console.log(body);
-    });
-  }, [])
+  useAPI(
+    "https://apsva.instructure.com/api/v1/courses?per_page=50&enrollment_state=active&state=available&include[]=public_description&include[]=favorites",
+    (data) => setData(data)
+  );
 
   return (
-    <Layout>
+    <Layout className="h-screen">
       <TopBar title="Canvas" />
-      <Content className="flex flex-row flex-wrap p-3 !min-h-screen overflow-x-hidden">
+      <Content className="flex flex-row flex-wrap p-3 overflow-scroll overflow-x-hidden">
         {data ? (
           data
             .filter((a) => a.is_favorite)

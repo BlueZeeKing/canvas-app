@@ -1,6 +1,5 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
-import { fetch } from "@tauri-apps/api/http";
 
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
@@ -11,6 +10,7 @@ import setItem from "../../../../utils/breadcrumb";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { faCloudArrowUp, faPaperPlane, faComment } from "@fortawesome/free-solid-svg-icons";
+import useAPI from "../../../../utils/useAPI";
 
 const { Text, Title } = Typography
 const { Step } = Steps;
@@ -34,24 +34,13 @@ export default function Assignment() {
   const { course, assignment } = useParams();
   const [data, setData] = useState<Assignment>();
 
-  useEffect(() => {
-    setItem(3, "Assignment", `/${course}/assignment/${assignment}`);
-    fetch(
-      `https://apsva.instructure.com/api/v1/courses/${course}/assignments/${assignment}?include=submission`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-        },
-      }
-    ).then((body) => {
-      // @ts-expect-error
-      setData(body.data);
-      // @ts-expect-error
-      setItem(3, body.data.name, `/${course}/assignment/${assignment}`);
-      console.log(body);
-    });
-  }, []);
+  useAPI(
+    `https://apsva.instructure.com/api/v1/courses/${course}/assignments/${assignment}?include=submission`,
+    (body) => {
+      setData(body);
+      setItem(3, body.name, `/${course}/assignment/${assignment}`);
+    }
+  );
 
   return (
     <Main>

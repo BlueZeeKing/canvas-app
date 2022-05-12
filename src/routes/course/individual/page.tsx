@@ -1,11 +1,11 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
-import { fetch } from "@tauri-apps/api/http";
 
 import Main from "../../../../components/Main";
 import { Skeleton, Menu, Divider, Empty, Typography } from "antd";
 import process from "../../../../utils/htmlProcessor";
 import setItem from "../../../../utils/breadcrumb";
+import useAPI from "../../../../utils/useAPI";
 
 const { Text, Title } = Typography
 
@@ -25,23 +25,15 @@ export default function Page() {
   const { course, page } = useParams();
   const [data, setData] = useState<Assignment>();
 
-  useEffect(() => {
-    setItem(3, "Page", `/${course}/page/${page}`);
-    fetch(
-      `https://apsva.instructure.com/api/v1/courses/${course}/pages/${page}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-        },
-      }
-    ).then((body) => {
-      // @ts-expect-error
-      setData(body.data);
-      // @ts-expect-error
-      setItem(3, body.data.title, `/${course}/page/${page}`);
-    });
-  }, []);
+  useEffect(() => setItem(3, "Page", `/${course}/page/${page}`), [])
+  
+  useAPI(
+    `https://apsva.instructure.com/api/v1/courses/${course}/pages/${page}`,
+    (body) => {
+      setData(body);
+      setItem(3, body.title, `/${course}/page/${page}`);
+    }
+  );
 
   return (
     <Main>

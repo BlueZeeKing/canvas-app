@@ -1,6 +1,5 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
-import * as http from "@tauri-apps/api/http";
 import { save } from "@tauri-apps/api/dialog"
 import { writeBinaryFile } from "@tauri-apps/api/fs";
 
@@ -9,6 +8,7 @@ import Center from "../../../../components/Center";
 import { Skeleton, Menu, Divider, Empty, Typography } from "antd";
 import { Document, Page } from "react-pdf";
 import setItem from "../../../../utils/breadcrumb";
+import useAPI from "../../../../utils/useAPI";
 
 const { Text, Title } = Typography
 
@@ -31,29 +31,16 @@ export default function File() {
   const [url, setUrl] = useState("");
   const [numPages, setNumPages] = useState(0);
 
-  useEffect(() => {
-    setItem(3, "File", `/${course}/file/${file}`);
-    http.fetch(`https://apsva.instructure.com/api/v1/files/${file}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-      },
-    }).then((body) => {
-      // @ts-expect-error
-      setData(body.data);
-      // @ts-expect-error
-      setItem(3, body.data.display_name, `/${course}/file/${file}`);
-    });
-    http.fetch(`https://apsva.instructure.com/api/v1/files/${file}/public_url`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-      },
-    }).then((body) => {
-      // @ts-expect-error
-      setUrl(body.data.public_url);
-    });
-  }, []);
+  setItem(3, "File", `/${course}/file/${file}`);
+
+  useAPI(`https://apsva.instructure.com/api/v1/files/${file}`, (body) => {
+    setData(body);
+    setItem(3, body.display_name, `/${course}/file/${file}`);
+  });
+
+  useAPI(`https://apsva.instructure.com/api/v1/files/${file}/public_url`, (body) => {
+    setUrl(body.public_url);
+  });
 
   function removeTextLayerOffset() {
     const textLayers = document.querySelectorAll(".react-pdf__Page__textContent");

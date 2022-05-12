@@ -1,11 +1,11 @@
 import { useParams } from "react-router"
 import { useState, useEffect } from "react"
-import { fetch } from "@tauri-apps/api/http";
 
 import Main from "../../../components/Main";
 import setItem from "../../../utils/breadcrumb";
 import { Skeleton, Menu } from "antd";
 import { Link } from "react-router-dom";
+import useAPI from "../../../utils/useAPI";
 
 interface Discussion {
   id: number,
@@ -18,20 +18,10 @@ export default function Discussions() {
 
   setItem(2, "Discussions", `/${course}/discussions`);
 
-  useEffect(() => {
-    fetch(
-      `https://apsva.instructure.com/api/v1/courses/${course}/discussion_topics?per_page=50`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-        },
-      }
-    ).then((body) => {
-      // @ts-expect-error
-      setData(body.data);
-    });
-  }, []);
+  useAPI(
+    `https://apsva.instructure.com/api/v1/courses/${course}/discussion_topics?per_page=50`,
+    (body) => setData(body)
+  );
 
   return (
     <Main>

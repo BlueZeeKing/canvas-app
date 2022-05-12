@@ -2,7 +2,7 @@ import { Layout, Menu, Affix } from "antd";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom";
-import { fetch } from "@tauri-apps/api/http"
+import useAPI from "../utils/useAPI";
 
 const { Sider } = Layout;
 
@@ -11,39 +11,12 @@ export default function Sidebar() {
   
   // @ts-expect-error
   const [data, setData] = useState<Array<any>>(course && window.localStorage.getItem(course) ? JSON.parse(window.localStorage.getItem(course)).data : []);
-  console.log(data)
 
-  useEffect(() => {
-    if (course && window.localStorage.getItem(course)) {
-      // @ts-expect-error
-      const old = JSON.parse(window.localStorage.getItem(course));
-      if (Date.now() - old.time > 10000) {
-        fetch(`https://apsva.instructure.com/api/v1/courses/${course}/tabs`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-          },
-        }).then((body) => {
-          // @ts-expect-error
-          setData(body.data);
-          window.localStorage.setItem(course, JSON.stringify({data: body.data, time: Date.now().toString()}));
-        });
-      } else {
-        setData(old.data);
-      }
-    } else if (course) {
-      fetch(`https://apsva.instructure.com/api/v1/courses/${course}/tabs`, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-        },
-      }).then((body) => {
-        // @ts-expect-error
-        setData(body.data);
-        window.localStorage.setItem(course, JSON.stringify({data: body.data, time: Date.now().toString()}));
-      });
-    }
-  }, []);
+  useAPI(`https://apsva.instructure.com/api/v1/courses/${course}/tabs`, (data) => {
+    setData(data);
+    // @ts-expect-error
+    window.localStorage.setItem(course, JSON.stringify({ data: data }));
+  });
 
   return (
     <Sider>

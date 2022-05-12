@@ -1,11 +1,11 @@
 import { useParams } from "react-router"
 import { useState, useEffect } from "react"
-import { fetch } from "@tauri-apps/api/http";
 
 import Main from "../../../components/Main";
 import process from "../../../utils/htmlProcessor";
 import setItem from "../../../utils/breadcrumb";
 import { Layout, Skeleton } from "antd";
+import useAPI from "../../../utils/useAPI";
 
 export default function Wiki() {
   const { course } = useParams();
@@ -13,20 +13,7 @@ export default function Wiki() {
 
   setItem(2, "Home", `/${course}/wiki`);
 
-  useEffect(() => {
-    fetch(
-      `https://apsva.instructure.com/api/v1/courses/${course}/front_page`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-        },
-      }
-    ).then((body) => {
-      // @ts-expect-error
-      setData(body.data.body);
-    });
-  }, []);
+  useAPI(`https://apsva.instructure.com/api/v1/courses/${course}/front_page`, (body) => setData(body.body));
 
   return (
     <Main>
