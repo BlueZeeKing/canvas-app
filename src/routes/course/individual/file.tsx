@@ -10,6 +10,10 @@ import { Document, Page } from "react-pdf";
 import setItem from "../../../../utils/breadcrumb";
 import useAPI from "../../../../utils/useAPI";
 
+import { pdfjs } from "react-pdf";
+
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.js`;
+
 const { Text, Title } = Typography
 
 interface File {

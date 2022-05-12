@@ -25,9 +25,6 @@ const { Content } = Layout;
 
 async function asyncImports() {
   await import("antd/dist/antd.dark.min.css");
-  const { pdfjs } = await import("react-pdf")
-  
-  pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.js`;
 }
 
 asyncImports();

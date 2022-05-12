@@ -31,12 +31,9 @@ export default function process(rawHtml: string) {
     } else if (email.test(item.href)) {
       ;
     } else {
-      item.onclick = (e) => {
-        e.preventDefault()
-        open(item.href)
-        console.log("click")
-      };
-      item.href = "";
+      item.onclick = (e) => console.log(e)
+      item.href = "javascript: void(0);";
+      console.log(item)
     }
   })
   // @ts-expect-error

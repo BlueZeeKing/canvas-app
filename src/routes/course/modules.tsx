@@ -13,6 +13,7 @@ import { Skeleton, Menu } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import useAPI from "../../../utils/useAPI";
+import { open } from "@tauri-apps/api/shell"
 
 const { SubMenu } = Menu;
 
@@ -80,16 +81,16 @@ export default function Modules() {
                       key={item.id}
                       style={{ paddingLeft: `${24 * item.indent + 48}px` }}
                     >
-                      <a href={item.external_url} target="_blank">
-                        <div>
-                          <FontAwesomeIcon
-                            icon={faLink}
-                            color="white"
-                            style={{ paddingRight: "8px" }}
-                          />
-                          {item.title}
-                        </div>
-                      </a>
+                      <div
+                        onClick={() => open(item.external_url)}
+                      >
+                        <FontAwesomeIcon
+                          icon={faLink}
+                          color="white"
+                          style={{ paddingRight: "8px" }}
+                        />
+                        {item.title}
+                      </div>
                     </Menu.Item>
                   );
                 } else if (item.type == "Page") {
