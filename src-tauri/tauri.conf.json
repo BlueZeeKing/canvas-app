@@ -21,13 +21,18 @@
         ]
       },
       "dialog": {
-        "save": true
+        "save": true,
+        "open": true
       },
       "fs": {
-        "writeFile": true
+        "writeFile": true,
+        "readFile": true
       },
       "shell": {
         "open": true
+      },
+      "path": {
+        "all": true
       }
     },
     "bundle": {

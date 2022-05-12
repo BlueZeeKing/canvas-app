@@ -27,7 +27,7 @@ export default function Main(props: { children: any }) {
       <TopBar title="Canvas" />
       <Layout className="h-full">
         <Sidebar />
-        <Content className="h-full p-3 overflow-scroll">
+        <Content className="h-full p-3 overflow-y-scroll">
           <Breadcrumb>
             {state.map((item) => <Breadcrumb.Item key={item.name}><Link to={item.url}>{item.name}</Link></Breadcrumb.Item>)}
           </Breadcrumb>

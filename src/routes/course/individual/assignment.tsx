@@ -4,16 +4,18 @@ import { useState, useEffect } from "react";
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
 import process from "../../../../utils/htmlProcessor";
-import { Skeleton, Menu, Divider, Empty, Typography, Steps } from "antd";
+import { Skeleton, Card, Divider, Empty, Typography, Steps, Button, Tabs} from "antd";
 import setItem from "../../../../utils/breadcrumb";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { faCloudArrowUp, faPaperPlane, faComment } from "@fortawesome/free-solid-svg-icons";
 import useAPI from "../../../../utils/useAPI";
+import SubmitArea from "../../../../components/SubmitArea";
 
 const { Text, Title } = Typography
 const { Step } = Steps;
+const { TabPane } = Tabs;
 
 interface Assignment {
   author: {
@@ -28,6 +30,7 @@ interface Assignment {
   submission: {
     workflow_state: string
   }
+  submission_types: string[]
 }
 
 export default function Assignment() {
@@ -40,7 +43,7 @@ export default function Assignment() {
       setData(body);
       setItem(3, body.name, `/${course}/assignment/${assignment}`);
     }
-  );
+  )
 
   return (
     <Main>
@@ -73,22 +76,38 @@ export default function Assignment() {
               minute: "numeric",
             })}
           </Text>
-          <Divider />
-          <Steps current={["unsubmitted", "uploaded", "submitted", "graded"].indexOf(data.submission.workflow_state)-1}>
-            <Step title="Uploaded" icon={<FontAwesomeIcon icon={faCloudArrowUp} />} />
-            <Step title="Submitted" icon={<FontAwesomeIcon icon={faPaperPlane} />} />
+          <Steps
+            current={
+              ["unsubmitted", "uploaded", "submitted", "graded"].indexOf(
+                data.submission.workflow_state
+              ) - 1
+            }
+            className="!mt-3"
+          >
+            <Step
+              title="Uploaded"
+              icon={<FontAwesomeIcon icon={faCloudArrowUp} />}
+            />
+            <Step
+              title="Submitted"
+              icon={<FontAwesomeIcon icon={faPaperPlane} />}
+            />
             <Step title="Graded" icon={<FontAwesomeIcon icon={faComment} />} />
           </Steps>
-          <Divider />
           {data.description != "" ? (
-            <div
-              dangerouslySetInnerHTML={{
-                __html: process(data.description),
-              }}
-            ></div>
+            <>
+              <Divider orientation="left">Description</Divider>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: process(data.description),
+                }}
+              ></div>
+            </>
           ) : (
-            <Empty />
+            ""
           )}
+          <Divider orientation="left">Submit</Divider>
+          <SubmitArea type={data.submission_types} />
         </div>
       ) : (
         <Skeleton />
