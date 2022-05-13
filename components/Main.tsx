@@ -7,13 +7,13 @@ import { Link } from "react-router-dom";
 
 const { Content } = Layout;
 
-interface BreakcrumbItem {
+interface BreadcrumbItem {
   name: string,
   url: string
 }
 
 export default function Main(props: { children: any }) {
-  const [state, setState] = useState<BreakcrumbItem[]>([{ name: "Dashboard", url: "/" }])
+  const [state, setState] = useState<BreadcrumbItem[]>([{ name: "Dashboard", url: "/" }])
   useEffect(() => {
     if (window.localStorage.getItem("breadcrumb")) {
       // @ts-expect-error
@@ -22,6 +22,7 @@ export default function Main(props: { children: any }) {
       window.localStorage.setItem("breadcrumb", JSON.stringify([{ name: "Dashboard", url: "/" }]));
     }
   }, [window.localStorage.getItem("breadcrumb")])
+
   return (
     <Layout className="h-screen">
       <TopBar title="Canvas" />
