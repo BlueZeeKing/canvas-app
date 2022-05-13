@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
 import process from "../../../../utils/htmlProcessor";
-import { Skeleton, Card, Divider, Empty, Typography, Steps, Button, Tabs} from "antd";
+import { Skeleton, Alert, Divider, Empty, Typography, Steps, Button, Tabs} from "antd";
 import setItem from "../../../../utils/breadcrumb";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -36,12 +36,18 @@ interface Assignment {
 export default function Assignment() {
   const { course, assignment } = useParams();
   const [data, setData] = useState<Assignment>();
+  const [current, setCurrent] = useState(-1)
 
   useAPI(
     `https://apsva.instructure.com/api/v1/courses/${course}/assignments/${assignment}?include=submission`,
     (body) => {
       setData(body);
       setItem(3, body.name, `/${course}/assignment/${assignment}`);
+      setCurrent(
+        ["unsubmitted", "uploaded", "submitted", "graded"].indexOf(
+          body.submission.workflow_state
+        ) - 1
+      );
     }
   )
 
@@ -77,11 +83,7 @@ export default function Assignment() {
             })}
           </Text>
           <Steps
-            current={
-              ["unsubmitted", "uploaded", "submitted", "graded"].indexOf(
-                data.submission.workflow_state
-              ) - 1
-            }
+            current={current}
             className="!mt-3"
           >
             <Step
@@ -107,7 +109,8 @@ export default function Assignment() {
             ""
           )}
           <Divider orientation="left">Submit</Divider>
-          <SubmitArea type={data.submission_types} />
+          <Alert showIcon type="warning" closable message="Submissions are not yet fully stable, proceed with caution"/>
+          <SubmitArea setCurrent={setCurrent} type={data.submission_types} />
         </div>
       ) : (
         <Skeleton />

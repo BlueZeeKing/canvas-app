@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client'
 import './index.css'
 import App from "./App";
 
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
 
 const Wiki = React.lazy(() => import("./routes/course/wiki"));
 const Modules = React.lazy(() => import("./routes/course/modules"));
@@ -19,7 +19,7 @@ const File = React.lazy(() => import("./routes/course/individual/file"));
 
 import TopBar from "../components/TopBar";
 
-import { Empty, Layout, Spin } from "antd";
+import { Empty, Layout, Spin, Result, Button } from "antd";
 
 const { Content } = Layout;
 
@@ -55,19 +55,21 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 );
 
 function Error() {
+  const navigate = useNavigate()
   return (
     <Layout>
       <TopBar title="Canvas" />
       <Content className="p-3 !min-h-screen overflow-x-hidden">
-        <Empty
-          description={
-            <>
-              <span>404</span>
-              <br></br>
-              <Link to="/">Return to home page</Link>
-            </>
+        <Result
+          status="404"
+          title="404"
+          subTitle="Sorry, the page you visited does not exist."
+          extra={
+            <Button type="primary" onClick={() => navigate("/")}>
+              Back Home
+            </Button>
           }
-        ></Empty>
+        />
       </Content>
     </Layout>
   );

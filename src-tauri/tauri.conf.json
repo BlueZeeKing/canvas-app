@@ -17,7 +17,8 @@
         "request": true,
         "scope": [
           "https://apsva.instructure.com/api/*",
-          "https://inst-fs-iad-prod.inscloudgate.net/*"
+          "https://inst-fs-iad-prod.inscloudgate.net/*",
+          "https://*"
         ]
       },
       "dialog": {
