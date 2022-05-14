@@ -1,15 +1,14 @@
-import { Tabs, Card, Input, Segmented, Button } from "antd";
+import { Tabs, Card, Input, Segmented, Button, Select } from "antd";
 import { useState, useMemo } from "react";
 import { Converter } from "showdown"
 import DOMPurify from "isomorphic-dompurify";
 import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faLink, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { fetch } from "@tauri-apps/api/http";
 
 const { TabPane } = Tabs;
-
-const converter = new Converter();
+const { Option } = Select;
 
 export default function TextInput(props: {
   item: string;
@@ -17,33 +16,31 @@ export default function TextInput(props: {
   setSuccess: (a: number) => void;
 }) {
   const { course, assignment } = useParams();
-  const [value, setValue] = useState("Source");
+  const [value, setValue] = useState("https://")
   const [text, setText] = useState("");
 
   return (
     <>
       <Card key={props.item}>
-        <Segmented
-          value={value}
-          onChange={(value) => setValue(value.valueOf().toString())}
-          style={{ marginBottom: "0.5rem" }}
-          options={["Source", "Preview"]}
-        />
-        {value == "Source" ? (
-          <Input.TextArea
-            className="code"
-            style={{ height: "10rem" }}
+        <div className="flex flex-row">
+          <FontAwesomeIcon className="p-2" icon={faLink} />
+          <Input
+            addonBefore={
+              <Select
+                onChange={(e) => setValue(e)}
+                defaultValue="https://"
+                className="select-before"
+              >
+                <Option value="http://">http://</Option>
+                <Option value="https://">https://</Option>
+              </Select>
+            }
             value={text}
             onChange={(e) => setText(e.target.value)}
+            placeholder="submission url"
+            status={validator(value + text)}
           />
-        ) : (
-          <div
-            className="prose prose-invert"
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(converter.makeHtml(text)),
-            }}
-          ></div>
-        )}
+        </div>
       </Card>
       <Button
         type="primary"
@@ -53,8 +50,8 @@ export default function TextInput(props: {
         onClick={async () => {
           try {
             let query = {
-              "submission[submission_type]": "online_text_entry",
-              "submission[body]": value+text,
+              "submission[submission_type]": "online_url",
+              "submission[url]": text,
             };
             const data = await fetch(
               `https://apsva.instructure.com/api/v1/courses/${course}/assignments/${assignment}/submissions`,
@@ -67,10 +64,10 @@ export default function TextInput(props: {
               }
             );
 
-            console.log(data)
+            console.log(data);
 
             if (data.ok) {
-              setText("")
+              setText("");
               props.setSuccess(1);
               props.setCurrent(1);
             } else {
@@ -86,4 +83,18 @@ export default function TextInput(props: {
       </Button>
     </>
   );
+}
+
+const pattern = new RegExp(
+  "^(https?:\\/\\/)?" +
+    "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" +
+    "((\\d{1,3}\\.){3}\\d{1,3}))" +
+    "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
+    "(\\?[;&a-z\\d%_.~+=-]*)?" +
+    "(\\#[-a-z\\d_]*)?$",
+  "i"
+);
+
+function validator(url: string): "" | "error" | "warning" {
+  return !!pattern.test(url) ? "" : "error";
 }

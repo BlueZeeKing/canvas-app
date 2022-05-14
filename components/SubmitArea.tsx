@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import FileUpload from "./submitTypes/FileUpload"
 import TextInput from "./submitTypes/TextInput";
+import URLInput from "./submitTypes/URLInput";
 
 const { TabPane } = Tabs;
 
@@ -39,6 +40,16 @@ export default function SubmitArea(props: { type: string[], setCurrent: (a: numb
             return (
               <TabPane tab="Text Entry">
                 <TextInput
+                  item={item}
+                  setCurrent={props.setCurrent}
+                  setSuccess={setSuccess}
+                />
+              </TabPane>
+            );
+          } else if (item == "online_url") {
+            return (
+              <TabPane tab="Text Entry">
+                <URLInput
                   item={item}
                   setCurrent={props.setCurrent}
                   setSuccess={setSuccess}
