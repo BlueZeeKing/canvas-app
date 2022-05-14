@@ -18,7 +18,6 @@ interface File {
 
 export default function SubmitArea(props: { type: string[], setCurrent: (a: number) => void }) {
   const { course, assignment } = useParams()
-  const [list, setList] = useState<File[]>([]);
   const [success, setSuccess] = useState(-1);
 
   if (props.type.length > 0 && props.type[0] != "not_graded") {
@@ -31,8 +30,6 @@ export default function SubmitArea(props: { type: string[], setCurrent: (a: numb
               <TabPane tab="File Upload" className="flex flex-col">
                 <FileUpload
                   item={item}
-                  list={list}
-                  setList={setList}
                   setCurrent={props.setCurrent}
                   setSuccess={setSuccess}
                 />
@@ -41,7 +38,11 @@ export default function SubmitArea(props: { type: string[], setCurrent: (a: numb
           } else if (item == "online_text_entry") {
             return (
               <TabPane tab="Text Entry">
-                <TextInput item={item} />
+                <TextInput
+                  item={item}
+                  setCurrent={props.setCurrent}
+                  setSuccess={setSuccess}
+                />
               </TabPane>
             );
           }

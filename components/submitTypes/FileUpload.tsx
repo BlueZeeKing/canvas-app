@@ -2,6 +2,7 @@ import * as http from "@tauri-apps/api/http";
 import { basename } from "@tauri-apps/api/path";
 import { readBinaryFile } from "@tauri-apps/api/fs";
 import { open } from "@tauri-apps/api/dialog";
+import { useState } from "react";
 
 import { Card, Empty, Button, Tabs, List, Result, Alert } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -18,12 +19,11 @@ interface File {
 
 export default function FileUpload(props: {
   item: string;
-  list: File[];
-  setList: (a: File[]) => void;
   setCurrent: (a: number) => void;
   setSuccess: (a: number) => void;
 }) {
   const { course, assignment } = useParams();
+  const [list, setList] = useState<File[]>([]);
 
   return (
     <>
@@ -36,7 +36,7 @@ export default function FileUpload(props: {
       />
       <Card key={props.item}>
         <List
-          dataSource={props.list}
+          dataSource={list}
           renderItem={(item: File) => (
             <List.Item>
               <List.Item.Meta title={item.name} />
@@ -55,11 +55,9 @@ export default function FileUpload(props: {
                     }
                   );
 
-                  const newList = props.list.filter(
-                    (value) => value.id != item.id
-                  );
+                  const newList = list.filter((value) => value.id != item.id);
 
-                  props.setList(newList);
+                  setList(newList);
 
                   if (newList.length <= 0) {
                     props.setCurrent(-1);
@@ -106,8 +104,8 @@ export default function FileUpload(props: {
 
             const fileUploadData = await fileUpload.json();
 
-            props.setList(
-              props.list.concat({
+            setList(
+              list.concat({
                 name: fileUploadData.display_name,
                 id: fileUploadData.id,
               })
@@ -129,7 +127,7 @@ export default function FileUpload(props: {
             try {
               let query = {
                 "submission[submission_type]": "online_upload",
-                "submission[file_ids][]": props.list
+                "submission[file_ids][]": list
                   .map((item) => item.id.toString())
                   .join(","),
               };
@@ -145,7 +143,7 @@ export default function FileUpload(props: {
               );
 
               if (data.ok) {
-                props.setList([]);
+                setList([]);
                 props.setSuccess(1);
                 props.setCurrent(1);
               } else {
