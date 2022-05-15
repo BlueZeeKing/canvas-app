@@ -9,6 +9,7 @@ import { Skeleton, Avatar, Divider, Tooltip, Typography, Comment } from "antd";
 import { LikeOutlined, LikeFilled } from "@ant-design/icons";
 import setItem from "../../../../utils/breadcrumb";
 import useAPI from "../../../../utils/useAPI";
+import getAPIKey from "../../../../utils/getAPIKey";
 
 const { Text, Title } = Typography
 
@@ -75,7 +76,7 @@ export default function Discussion() {
     }
   );
 
-  function setLikes(item: any, index: number) {
+  async function setLikes(item: any, index: number) {
     let copy = JSON.parse(JSON.stringify(entries));
     let entry = copy[index];
     if (entries[index].my_rating == 1) {
@@ -91,7 +92,7 @@ export default function Discussion() {
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
+          Authorization: `Bearer ${await getAPIKey()}`,
         },
         body: Body.form({ rating: entry.my_rating.toString() }),
       }

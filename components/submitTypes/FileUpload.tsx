@@ -4,11 +4,12 @@ import { readBinaryFile } from "@tauri-apps/api/fs";
 import { open } from "@tauri-apps/api/dialog";
 import { useState } from "react";
 
-import { Card, Empty, Button, Tabs, List, Result, Alert } from "antd";
+import { Card, Empty, Button, Tabs, List, notification, Alert } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUpload, faXmark, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
 import { useParams } from "react-router-dom";
+import getAPIKey from "../../utils/getAPIKey";
 
 const { TabPane } = Tabs;
 
@@ -50,17 +51,23 @@ export default function FileUpload(props: {
                     {
                       method: "DELETE",
                       headers: {
-                        Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
+                        Authorization: `Bearer ${await getAPIKey()}`,
                       },
                     }
                   );
 
-                  const newList = list.filter((value) => value.id != item.id);
+                  if (res.ok) {
+                    const newList = list.filter((value) => value.id != item.id);
 
-                  setList(newList);
+                    setList(newList);
 
-                  if (newList.length <= 0) {
-                    props.setCurrent(-1);
+                    if (newList.length <= 0) {
+                      props.setCurrent(-1);
+                    }
+                  } else {
+                    notification.error({
+                      message: "An error occurred",
+                    });
                   }
                 }}
               ></Button>
@@ -70,48 +77,67 @@ export default function FileUpload(props: {
         <Button
           icon={<FontAwesomeIcon className="mr-2" icon={faUpload} />}
           onClick={async () => {
-            const path = await open();
-            // @ts-expect-error
-            const name = await basename(path);
-            // @ts-expect-error
-            const fileData = await readBinaryFile(path);
-            const data: { data: any } = await http.fetch(
-              `https://apsva.instructure.com/api/v1/courses/${course}/assignments/${assignment}/submissions/self/files`,
-              {
-                method: "POST",
-                body: http.Body.form({
-                  name: name,
-                  size: fileData.length.toString(),
-                }),
-                headers: {
-                  Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
-                },
+            try {
+              const path = await open();
+              // @ts-expect-error
+              const name = await basename(path);
+              // @ts-expect-error
+              const fileData = await readBinaryFile(path);
+              const data: { data: any; ok: boolean } = await http.fetch(
+                `https://apsva.instructure.com/api/v1/courses/${course}/assignments/${assignment}/submissions/self/files`,
+                {
+                  method: "POST",
+                  body: http.Body.form({
+                    name: name,
+                    size: fileData.length.toString(),
+                  }),
+                  headers: {
+                    Authorization: `Bearer ${await getAPIKey()}`,
+                  },
+                }
+              );
+
+              if (data.ok) {
+                const formData = new FormData();
+
+                for (const key in data.data.upload_params) {
+                  formData.append(key, data.data.upload_params[key]);
+                }
+
+                formData.append("file", new Blob([fileData]));
+
+                const fileUpload = await fetch(data.data.upload_url, {
+                  method: "POST",
+                  body: formData,
+                });
+
+                if (fileUpload.ok) {
+                  const fileUploadData = await fileUpload.json();
+
+                  setList(
+                    list.concat({
+                      name: fileUploadData.display_name,
+                      id: fileUploadData.id,
+                    })
+                  );
+
+                  props.setCurrent(0);
+                } else {
+                  notification.error({
+                    message: "A upload error occurred",
+                  });
+                }
+              } else {
+                notification.error({
+                  message: "A upload error occurred",
+                });
               }
-            );
-
-            const formData = new FormData();
-
-            for (const key in data.data.upload_params) {
-              formData.append(key, data.data.upload_params[key]);
+            } catch (err) {
+              notification.error({
+                message: "An error occurred",
+                description: `${err}`,
+              });
             }
-
-            formData.append("file", new Blob([fileData]));
-
-            const fileUpload = await fetch(data.data.upload_url, {
-              method: "POST",
-              body: formData,
-            });
-
-            const fileUploadData = await fileUpload.json();
-
-            setList(
-              list.concat({
-                name: fileUploadData.display_name,
-                id: fileUploadData.id,
-              })
-            );
-
-            props.setCurrent(0);
           }}
         >
           Select File
@@ -137,7 +163,7 @@ export default function FileUpload(props: {
                   method: "POST",
                   query: query,
                   headers: {
-                    Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
+                    Authorization: `Bearer ${await getAPIKey()}`,
                   },
                 }
               );
