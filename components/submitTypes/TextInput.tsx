@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { fetch } from "@tauri-apps/api/http";
+import getAPIKey from "../../utils/getAPIKey";
 
 const { TabPane } = Tabs;
 
@@ -62,7 +63,7 @@ export default function TextInput(props: {
                 method: "POST",
                 query: query,
                 headers: {
-                  Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
+                  Authorization: `Bearer ${getAPIKey()}`,
                 },
               }
             );

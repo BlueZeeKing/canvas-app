@@ -9,6 +9,7 @@ import { Skeleton, Avatar, Divider, Tooltip, Typography, Comment } from "antd";
 import { LikeOutlined, LikeFilled } from "@ant-design/icons";
 import setItem from "../../../../utils/breadcrumb";
 import useAPI from "../../../../utils/useAPI";
+import getAPIKey from "../../../../utils/getAPIKey";
 
 const { Text, Title } = Typography
 
@@ -91,7 +92,7 @@ export default function Discussion() {
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
+          Authorization: `Bearer ${getAPIKey()}`,
         },
         body: Body.form({ rating: entry.my_rating.toString() }),
       }

@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUpload, faXmark, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 
 import { useParams } from "react-router-dom";
+import getAPIKey from "../../utils/getAPIKey";
 
 const { TabPane } = Tabs;
 
@@ -50,7 +51,7 @@ export default function FileUpload(props: {
                     {
                       method: "DELETE",
                       headers: {
-                        Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
+                        Authorization: `Bearer ${getAPIKey()}`,
                       },
                     }
                   );
@@ -84,7 +85,7 @@ export default function FileUpload(props: {
                   size: fileData.length.toString(),
                 }),
                 headers: {
-                  Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
+                  Authorization: `Bearer ${getAPIKey()}`,
                 },
               }
             );
@@ -137,7 +138,7 @@ export default function FileUpload(props: {
                   method: "POST",
                   query: query,
                   headers: {
-                    Authorization: `Bearer ${import.meta.env.VITE_API_KEY}`,
+                    Authorization: `Bearer ${getAPIKey()}`,
                   },
                 }
               );
