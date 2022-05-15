@@ -22,7 +22,6 @@ export default function SubmitArea(props: { type: string[], setCurrent: (a: numb
   const [success, setSuccess] = useState(-1);
 
   if (props.type.length > 0 && props.type[0] != "not_graded") {
-    console.log("continue")
     return (
       <Tabs activeKey={success >= 0 ? "result" : undefined}>
         {props.type.map((item) => {

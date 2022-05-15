@@ -63,7 +63,7 @@ export default function TextInput(props: {
                 method: "POST",
                 query: query,
                 headers: {
-                  Authorization: `Bearer ${getAPIKey()}`,
+                  Authorization: `Bearer ${await getAPIKey()}`,
                 },
               }
             );

@@ -51,7 +51,7 @@ export default function FileUpload(props: {
                     {
                       method: "DELETE",
                       headers: {
-                        Authorization: `Bearer ${getAPIKey()}`,
+                        Authorization: `Bearer ${await getAPIKey()}`,
                       },
                     }
                   );
@@ -85,7 +85,7 @@ export default function FileUpload(props: {
                   size: fileData.length.toString(),
                 }),
                 headers: {
-                  Authorization: `Bearer ${getAPIKey()}`,
+                  Authorization: `Bearer ${await getAPIKey()}`,
                 },
               }
             );
@@ -138,7 +138,7 @@ export default function FileUpload(props: {
                   method: "POST",
                   query: query,
                   headers: {
-                    Authorization: `Bearer ${getAPIKey()}`,
+                    Authorization: `Bearer ${await getAPIKey()}`,
                   },
                 }
               );

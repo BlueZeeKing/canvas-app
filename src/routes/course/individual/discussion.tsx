@@ -76,7 +76,7 @@ export default function Discussion() {
     }
   );
 
-  function setLikes(item: any, index: number) {
+  async function setLikes(item: any, index: number) {
     let copy = JSON.parse(JSON.stringify(entries));
     let entry = copy[index];
     if (entries[index].my_rating == 1) {
@@ -92,7 +92,7 @@ export default function Discussion() {
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${getAPIKey()}`,
+          Authorization: `Bearer ${await getAPIKey()}`,
         },
         body: Body.form({ rating: entry.my_rating.toString() }),
       }
