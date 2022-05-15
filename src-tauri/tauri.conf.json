@@ -28,8 +28,10 @@
       "fs": {
         "writeFile": true,
         "readFile": true,
+        "createDir": true,
         "scope": [
-          "$APP/apikey.txt"
+          "$APP/apikey.txt",
+          "$APP"
         ]
       },
       "shell": {

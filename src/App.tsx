@@ -7,7 +7,7 @@ import setIndex from "../utils/breadcrumb";
 import getAPIKey from "../utils/getAPIKey";
 import { fetch } from "@tauri-apps/api/http"
 
-import { writeFile } from "@tauri-apps/api/fs";
+import { createDir, writeFile } from "@tauri-apps/api/fs";
 import { appDir, join } from "@tauri-apps/api/path";
 
 interface Item {
@@ -31,6 +31,7 @@ function App() {
     const asyncFunction = async () => {
       let apiKey = ""
       try {
+        await createDir(await appDir(), {recursive: true});
         apiKey = await getAPIKey()
         try {
           const body = await fetch(
