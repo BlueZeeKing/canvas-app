@@ -1,17 +1,20 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { notification } from "antd";
 import { fetch, getClient } from "@tauri-apps/api/http"
 import getAPIKey from "./getAPIKey";
 
 const re = new RegExp('<(http.+?)>; rel="next"');
 
-export default function useAPI(url: string, onComplete: (body: any) => void, fetchNext?: boolean) {
+export default function useAPI(url: string, onComplete: (body: any) => void) {
+  const [next, setNext] = useState(url)
   useEffect(() => {
-    fetchData(url, onComplete, typeof fetchNext !== "undefined" ? fetchNext : false);
+    fetchData(next, onComplete, setNext);
   }, []);
+
+  return [next, setNext]
 }
 
-async function fetchData(url: string, onComplete: (body: any) => void, fetchNext: boolean)  {
+export async function fetchData(url: string, onComplete: (body: any) => void, setNext: (a: string) => void)  {
   try {
     const body = await fetch(url, {
       method: "GET",
@@ -22,8 +25,8 @@ async function fetchData(url: string, onComplete: (body: any) => void, fetchNext
     if (body.ok) {
       onComplete(body.data);
       const link = parseLinks(body.headers.link);
-      if (link && fetchNext) {
-        fetchData(link, onComplete, fetchNext);
+      if (link) {
+        setNext(link)
       }
     } else {
       notification.error({

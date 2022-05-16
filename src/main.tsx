@@ -2,10 +2,12 @@ import React, { Suspense } from 'react'
 import ReactDOM from 'react-dom/client'
 
 import './index.css'
-import App from "./App";
+import App from "./routes/App";
 
 import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
 
+const Messages = React.lazy(() => import("./routes/messages"));
+const Message = React.lazy(() => import("./routes/message"));
 const Wiki = React.lazy(() => import("./routes/course/wiki"));
 const Modules = React.lazy(() => import("./routes/course/modules"));
 const Assignments = React.lazy(() => import("./routes/course/assignments"));
@@ -19,7 +21,7 @@ const File = React.lazy(() => import("./routes/course/individual/file"));
 
 import TopBar from "../components/TopBar";
 
-import { Empty, Layout, Spin, Result, Button } from "antd";
+import { Layout, Spin, Result, Button } from "antd";
 
 const { Content } = Layout;
 
@@ -34,6 +36,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<App />} />
+          <Route path="/messages" element={<Suspense fallback={<Spin />} ><Messages /></Suspense>} />
+          <Route path="/messages/:message" element={<Suspense fallback={<Spin />} ><Message /></Suspense>} />
 
           <Route path="/:course/wiki" element={<Suspense fallback={<Spin />} ><Wiki /></Suspense>} />
           <Route path="/:course/modules" element={<Suspense fallback={<Spin />} ><Modules /></Suspense>} />
