@@ -6,12 +6,12 @@ import getAPIKey from "./getAPIKey";
 const re = new RegExp('<(http.+?)>; rel="next"');
 
 export default function useAPI(url: string, onComplete: (body: any) => void) {
-  const [next, setNext] = useState(url)
+  const state = useState(url)
   useEffect(() => {
-    fetchData(next, onComplete, setNext);
+    fetchData(state[0], onComplete, state[1]);
   }, []);
 
-  return [next, setNext]
+  return state;
 }
 
 export async function fetchData(url: string, onComplete: (body: any) => void, setNext: (a: string) => void)  {
