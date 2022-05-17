@@ -6,15 +6,21 @@ import getAPIKey from "./getAPIKey";
 const re = new RegExp('<(http.+?)>; rel="next"');
 
 export default function useAPI(url: string, onComplete: (body: any) => void) {
-  const state = useState(url)
+  const [next, setNext] = useState(url)
+  const [complete, setComplete] = useState(false)
   useEffect(() => {
-    fetchData(state[0], onComplete, state[1]);
+    fetchData(next, onComplete, setNext, setComplete);
   }, []);
 
-  return state;
+  return { next: next, setNext: setNext, complete: complete, setComplete: setComplete};
 }
 
-export async function fetchData(url: string, onComplete: (body: any) => void, setNext: (a: string) => void)  {
+export async function fetchData(
+  url: string,
+  onComplete: (body: any) => void,
+  setNext: (a: string) => void,
+  setComplete: (a: boolean) => void
+) {
   try {
     const body = await fetch(url, {
       method: "GET",
@@ -26,7 +32,10 @@ export async function fetchData(url: string, onComplete: (body: any) => void, se
       onComplete(body.data);
       const link = parseLinks(body.headers.link);
       if (link) {
-        setNext(link)
+        setNext(link);
+        setComplete(false);
+      } else {
+        setComplete(true);
       }
     } else {
       notification.error({

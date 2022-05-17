@@ -40,7 +40,7 @@ function App() {
     setData(data.concat(inData));
   }
 
-  const [next, setNext] = useAPI(
+  const { next, setNext, complete, setComplete } = useAPI(
     "https://apsva.instructure.com/api/v1/conversations?per_page=15&include[]=participant_avatars",
     handleAPI
   );
@@ -66,20 +66,31 @@ function App() {
             </Menu.Item>
           </Menu>
         </Sider>
-        <Content className="p-3 overflow-scroll overflow-x-hidden">
+        <Content className="p-3 overflow-scroll overflow-x-hidden" id="scroll">
           <div className="fixed bottom-0 right-0 m-4 z-50">
             <Button
               type="primary"
               shape="circle"
               size="large"
-              icon={<FontAwesomeIcon size="7x" className="pr-1 pt-1" icon={faPaperPlane} />}
+              icon={
+                <FontAwesomeIcon
+                  size="7x"
+                  className="pr-1 pt-1"
+                  icon={faPaperPlane}
+                />
+              }
             />
           </div>
           <InfiniteScroll
             dataLength={data.length}
-            next={() => fetchData(next, handleAPI, setNext)}
-            loader={<Spin />}
-            hasMore={true}
+            next={() => fetchData(next, handleAPI, setNext, setComplete)}
+            loader={
+              <div className="w-full m-3 flex flex-row place-content-center">
+                <Spin />
+              </div>
+            }
+            hasMore={!complete}
+            scrollableTarget="scroll"
           >
             <List
               loading={data == null}

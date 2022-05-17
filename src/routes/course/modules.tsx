@@ -1,5 +1,5 @@
 import { useParams } from "react-router"
-import { useState, useEffect } from "react"
+import { useState, useRef } from "react"
 import {
   faPenRuler,
   faFile,
@@ -7,12 +7,12 @@ import {
   faNewspaper,
 } from "@fortawesome/free-solid-svg-icons";
 
-import Main from "../../../components/Main";
+import Main from "../../../components/MainInfinite";
 import setItem from "../../../utils/breadcrumb";
-import { Skeleton, Menu } from "antd";
+import { Skeleton, Menu, Spin } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
-import useAPI from "../../../utils/useAPI";
+import useAPI, { fetchData } from "../../../utils/useInfiniteAPI";
 import { open } from "@tauri-apps/api/shell"
 
 const { SubMenu } = Menu;
@@ -35,17 +35,27 @@ interface Module {
 
 export default function Modules() {
   const { course, module } = useParams();
-  const [data, setData] = useState<Module[]>();
+  const [data, setData] = useState<Module[]>([]);
 
   setItem(2, "Modules", `/${course}/modules`);
 
-  useAPI(
-    `https://apsva.instructure.com/api/v1/courses/${course}/modules?include=items&per_page=50`,
-    (body) => setData(body)
+  function handleAPI(inData: Module[]) {
+    setData(data.concat(inData));
+  }
+
+  const { next, setNext, complete, setComplete } = useAPI(
+    `https://apsva.instructure.com/api/v1/courses/${course}/modules?include=items`,
+    handleAPI
   );
 
+  console.log(next);
+
   return (
-    <Main>
+    <Main
+      length={data.length}
+      handleNext={() => fetchData(next, handleAPI, setNext, setComplete)}
+      complete={complete}
+    >
       {data ? (
         <Menu mode="inline" defaultOpenKeys={[module ? module : ""]}>
           {data.map((module: Module) => (
@@ -81,9 +91,7 @@ export default function Modules() {
                       key={item.id}
                       style={{ paddingLeft: `${24 * item.indent + 48}px` }}
                     >
-                      <div
-                        onClick={() => open(item.external_url)}
-                      >
+                      <div onClick={() => open(item.external_url)}>
                         <FontAwesomeIcon
                           icon={faLink}
                           color="white"
