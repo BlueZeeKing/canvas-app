@@ -31,8 +31,6 @@ export default function BottomButtons() {
     }
   );
 
-  console.log(`https://apsva.instructure.com/api/v1/courses/${course}/module_item_sequence?asset_type=ModuleItem&asset_id=${searchParams.get("id")}`);
-
   if (searchParams.get("id") && body && body.items.length > 0) {
     return (
       <div className="flex flex-row m-3">

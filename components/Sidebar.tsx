@@ -48,6 +48,8 @@ function url(course: any, item: { id: string, full_url: string}) {
     return `/${course}/discussions`;
   } else if (item.id == "grades") {
     return `/${course}/grades`;
+  } else if (item.id == "syllabus") {
+    return `/${course}/syllabus`;
   } else {
     return "/404";
   }
