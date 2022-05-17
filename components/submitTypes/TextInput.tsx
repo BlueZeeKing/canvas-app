@@ -55,7 +55,7 @@ export default function TextInput(props: {
           try {
             let query = {
               "submission[submission_type]": "online_text_entry",
-              "submission[body]": value+text,
+              "submission[body]": converter.makeHtml(text),
             };
             const data = await fetch(
               `https://apsva.instructure.com/api/v1/courses/${course}/assignments/${assignment}/submissions`,
