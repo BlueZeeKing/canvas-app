@@ -1,37 +1,45 @@
 import { useParams } from "react-router"
 import { useState, useEffect } from "react"
 
-import Main from "../../../components/Main";
+import Main from "../../../components/MainInfinite";
 import setItem from "../../../utils/breadcrumb";
 import { Skeleton, Menu } from "antd";
 import { Link } from "react-router-dom";
-import useAPI from "../../../utils/useAPI";
+import useAPI, {fetchData} from "../../../utils/useInfiniteAPI";
 
 interface Assignment {
-  id: number,
+  id: string,
   description: string,
   name: string
 }
 
 interface AssignmentGroup {
-  id: number;
+  id: string;
   name: string;
   assignments: Assignment[]
 }
 
 export default function Assignments() {
   const { course } = useParams();
-  const [data, setData] = useState<AssignmentGroup[]>();
+  const [data, setData] = useState<AssignmentGroup[]>([]);
 
   setItem(2, "Assignments", `/${course}/assignments`);
 
-  useAPI(
-    `https://apsva.instructure.com/api/v1/courses/${course}/assignment_groups?include=assignments&per_page=80`,
-    (body) => setData(body)
+  function handleAPI(inData: AssignmentGroup[]) {
+    setData(data.concat(inData));
+  }
+
+  const { next, setNext, complete, setComplete } = useAPI(
+    `https://apsva.instructure.com/api/v1/courses/${course}/assignment_groups?include=assignments`,
+    handleAPI
   );
 
   return (
-    <Main>
+    <Main
+      length={data.length}
+      handleNext={() => fetchData(next, handleAPI, setNext, setComplete)}
+      complete={complete}
+    >
       {data ? (
         <Menu mode="inline">
           <Menu.ItemGroup title="Assignments">
@@ -49,7 +57,7 @@ export default function Assignments() {
           </Menu.ItemGroup>
         </Menu>
       ) : (
-        <Skeleton />
+        <Skeleton active />
       )}
     </Main>
   );

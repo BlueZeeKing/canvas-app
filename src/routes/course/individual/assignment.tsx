@@ -113,7 +113,7 @@ export default function Assignment() {
           <SubmitArea setCurrent={setCurrent} type={data.submission_types} />
         </div>
       ) : (
-        <Skeleton />
+        <Skeleton active />
       )}
     </Main>
   );

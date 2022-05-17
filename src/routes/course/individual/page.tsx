@@ -24,8 +24,6 @@ interface Assignment {
 export default function Page() {
   const { course, page } = useParams();
   const [data, setData] = useState<Assignment>();
-
-  useEffect(() => setItem(3, "Page", `/${course}/page/${page}`), [])
   
   useAPI(
     `https://apsva.instructure.com/api/v1/courses/${course}/pages/${page}`,
@@ -61,7 +59,7 @@ export default function Page() {
           ></div>
         </div>
       ) : (
-        <Skeleton />
+        <Skeleton active />
       )}
     </Main>
   );

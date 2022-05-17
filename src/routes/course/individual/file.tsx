@@ -10,6 +10,8 @@ import { Document, Page } from "react-pdf";
 import setItem from "../../../../utils/breadcrumb";
 import useAPI from "../../../../utils/useAPI";
 
+import FileViewer from "../../../../components/fileViewers/pdf";
+
 import { pdfjs } from "react-pdf";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/legacy/build/pdf.worker.min.js`;
@@ -21,21 +23,19 @@ interface File {
     display_name: string;
     avatar_image_url: string;
   };
-  id: number;
+  id: string;
   created_at: string;
   display_name: string;
   body: string;
   due_at: string;
   url: string;
+  mime_class: string;
 }
 
 export default function File() {
   const { course, file } = useParams();
   const [data, setData] = useState<File>();
   const [url, setUrl] = useState("");
-  const [numPages, setNumPages] = useState(0);
-
-  setItem(3, "File", `/${course}/file/${file}`);
 
   useAPI(`https://apsva.instructure.com/api/v1/files/${file}`, (body) => {
     setData(body);
@@ -45,22 +45,6 @@ export default function File() {
   useAPI(`https://apsva.instructure.com/api/v1/files/${file}/public_url`, (body) => {
     setUrl(body.public_url);
   });
-
-  function removeTextLayerOffset() {
-    const textLayers = document.querySelectorAll(".react-pdf__Page__textContent");
-      textLayers.forEach(layer => {
-        // @ts-expect-error
-        const { style } = layer;
-        style.top = "0";
-        style.left = "0";
-        style.transform = "";
-    });
-  }
-
-  // @ts-expect-error
-  function onDocumentLoadSuccess({numPages}) {
-    setNumPages(numPages);
-  }
 
   return (
     <Main>
@@ -91,29 +75,10 @@ export default function File() {
             )}
           </Text>
           <Divider />
-          <Document
-            file={url}
-            onLoadSuccess={onDocumentLoadSuccess}
-          >
-            {
-            // @ts-expect-error
-            Array.apply(null, { length: numPages })
-              .map(Number.call, Number)
-              .map((item, index) =>
-                item == null ? (
-                  ""
-                ) : (
-                  <Page
-                    onLoadSuccess={removeTextLayerOffset}
-                    pageNumber={index + 1}
-                    className="m-1"
-                  />
-                )
-              )}
-          </Document>
+          {data.mime_class == "pdf" ? <FileViewer url={url} /> : data.mime_class == "image" ? <img src={url} /> : ""}
         </div>
       ) : (
-        <Skeleton />
+        <Skeleton active />
       )}
     </Main>
   );

@@ -27,11 +27,6 @@ export default function Main(props: { children: any, length: number, handleNext:
   const innerRef = useRef<HTMLDivElement>(null);
   const outerRef = useRef<HTMLDivElement>(null);
 
-  if (innerRef.current && outerRef.current && !props.complete) {
-    console.log(innerRef.current.clientHeight < outerRef.current.clientHeight)
-    props.handleNext()
-  }
-
   useEffect(() => {
     if (innerRef.current && outerRef.current && !props.complete && innerRef.current.clientHeight < outerRef.current.clientHeight) {
       props.handleNext();

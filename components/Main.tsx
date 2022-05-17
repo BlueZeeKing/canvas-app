@@ -4,6 +4,7 @@ import { Layout, Breadcrumb, Affix } from "antd";
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import BottomButton from "./bottomButton"
 
 const { Content } = Layout;
 
@@ -30,9 +31,14 @@ export default function Main(props: { children: any }) {
         <Sidebar />
         <Content className="h-full p-3 overflow-y-scroll">
           <Breadcrumb>
-            {state.map((item) => <Breadcrumb.Item key={item.name}><Link to={item.url}>{item.name}</Link></Breadcrumb.Item>)}
+            {state.map((item) => (
+              <Breadcrumb.Item key={item.name}>
+                <Link to={item.url}>{item.name}</Link>
+              </Breadcrumb.Item>
+            ))}
           </Breadcrumb>
           <div className="mt-3">{props.children}</div>
+          <BottomButton />
         </Content>
       </Layout>
     </Layout>

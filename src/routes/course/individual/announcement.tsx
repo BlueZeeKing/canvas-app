@@ -67,7 +67,7 @@ export default function Announcements() {
           ></div>
         </div>
       ) : (
-        <Skeleton />
+        <Skeleton active />
       )}
     </Main>
   );

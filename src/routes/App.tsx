@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Input, Card, Skeleton, Layout, Modal, Popconfirm, notification, Menu } from "antd";
+import { Input, Card, Spin, Layout, Modal, Popconfirm, notification, Menu, List } from "antd";
 import { useNavigate, Link } from "react-router-dom";
 
 import TopBar from "../../components/TopBar";
@@ -9,6 +9,8 @@ import { fetch } from "@tauri-apps/api/http"
 
 import { createDir, writeFile } from "@tauri-apps/api/fs";
 import { appDir, join } from "@tauri-apps/api/path";
+
+import { fetchData } from '../../utils/useInfiniteAPI';
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -30,51 +32,38 @@ interface Item {
 const { Content, Sider } = Layout;
 
 function App() {
-  const [data, setData] = useState<Array<Item>>()
+  const [data, setData] = useState<Array<Item>>([])
   const navigate = useNavigate();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [apiKeyInput, setKey] = useState("")
 
+  const [next, setNext] = useState("https://apsva.instructure.com/api/v1/courses?enrollment_state=active&state=available&include[]=public_description&include[]=favorites");
+  const [complete, setComplete] = useState(false);
+
+  function handleAPI(inData: Item[]) {
+    setData(data.concat(inData));
+  }
+
   useEffect(() => {
     const asyncFunction = async () => {
-      let apiKey = ""
       try {
         await createDir(await appDir(), {recursive: true});
-        apiKey = await getAPIKey()
-        try {
-          const body = await fetch(
-            "https://apsva.instructure.com/api/v1/courses?per_page=50&enrollment_state=active&state=available&include[]=public_description&include[]=favorites",
-            {
-              method: "GET",
-              headers: {
-                Authorization: `Bearer ${await apiKey}`,
-              },
-            }
-          );
-          if (body.ok) {
-            // @ts-expect-error
-            setData(body.data);
-          } else {
-            notification.error({
-              message: `Error: ${body.status}`,
-              // @ts-expect-error
-              description: `An error occurred while fetching the data: ${body.data.error}`,
-            });
-          }
-        } catch (err) {
-          notification.error({
-            message: "An error occurred",
-            description: `${err}`,
-          });
-        }
+        await getAPIKey()
+
+        fetchData(next, handleAPI, setNext, setComplete);
       } catch (err) {
-        console.log(err);
         setIsModalVisible(true)
       }
     };
 
     asyncFunction();
   }, []);
+
+  useEffect(() => {
+    if (!complete) {
+      fetchData(next, handleAPI, setNext, setComplete);
+    }
+  }, [next])
 
   return (
     <Layout className="h-screen">
@@ -96,37 +85,56 @@ function App() {
             </Menu.Item>
           </Menu>
         </Sider>
-        <Content className="flex flex-row flex-wrap p-3 overflow-scroll overflow-x-hidden">
+        <Content
+          className="flex flex-row flex-wrap p-3 overflow-scroll overflow-x-hidden"
+          id="scroll"
+        >
           {data ? (
-            data
-              .filter((a) => a.is_favorite)
-              .map((item: Item) => (
-                <Card
-                  onClick={() => {
-                    if (item.default_view == "wiki") {
-                      setIndex(1, item.name, `/${item.id}/wiki`);
-                      navigate(`/${item.id}/wiki`);
-                    } else if (item.default_view == "modules") {
-                      setIndex(1, item.name, `/${item.id}/modules`);
-                      navigate(`/${item.id}/modules`);
-                    } else if (item.default_view == "assignments") {
-                      setIndex(1, item.name, `/${item.id}/assignments`);
-                      navigate(`/${item.id}/assignments`);
-                    }
-                  }}
-                  key={item.id}
-                  title={item.name}
-                  className="w-72 h-40 !m-3 cursor-pointer"
-                >
-                  <p>
-                    {!item.public_description || item.public_description == ""
-                      ? item.course_code
-                      : item.public_description}
-                  </p>
-                </Card>
-              ))
+            <List
+              className="w-full overflow-x-hidden"
+              dataSource={data}
+              grid={{
+                gutter: 16,
+                xs: 1,
+                sm: 2,
+                md: 3,
+                lg: 4,
+                xl: 5,
+                xxl: 3,
+              }}
+              renderItem={(item) => (
+                <List.Item>
+                  <Card
+                    onClick={() => {
+                      if (item.default_view == "wiki") {
+                        setIndex(1, item.name, `/${item.id}/wiki`);
+                        navigate(`/${item.id}/wiki`);
+                      } else if (item.default_view == "modules") {
+                        setIndex(1, item.name, `/${item.id}/modules`);
+                        navigate(`/${item.id}/modules`);
+                      } else if (item.default_view == "assignments") {
+                        setIndex(1, item.name, `/${item.id}/assignments`);
+                        navigate(`/${item.id}/assignments`);
+                      }
+                    }}
+                    key={item.id}
+                    title={item.name}
+                    className="h-40 cursor-pointer"
+                  >
+                    <p>
+                      {!item.public_description ||
+                      item.public_description == ""
+                        ? item.course_code
+                        : item.public_description}
+                    </p>
+                  </Card>
+                </List.Item>
+              )}
+            />
           ) : (
-            <Skeleton style={{ width: "100%" }} />
+            <div className="m-3 w-full flex flex-row place-content-center">
+              <Spin size="large" />
+            </div>
           )}
           <Modal
             title="Enter API Key"
@@ -140,7 +148,7 @@ function App() {
                 onConfirm={async () => {
                   writeFile({
                     path: await join(await appDir(), "apikey.txt"),
-                    contents: apiKeyInput
+                    contents: apiKeyInput,
                   });
                   setIsModalVisible(false);
                   try {
@@ -179,8 +187,8 @@ function App() {
             <p>
               In order to continue to use this application an API key is needed.
               Please continue with caution as this app is still in development.
-              Enter the APi key in the input below only if you are absolutely sure
-              you are willing to use this development version.
+              Enter the APi key in the input below only if you are absolutely
+              sure you are willing to use this development version.
             </p>
             <Input
               value={apiKeyInput}
@@ -195,3 +203,17 @@ function App() {
 }
 
 export default App
+
+const re = new RegExp('<(http.+?)>; rel="next"');
+
+function parseLinks(dataString: string) {
+  if (dataString) {
+    const data = dataString.split(",");
+    for (let i = 0; i < data.length; i++) {
+      const match = data[i].match(re);
+      if (match != null) {
+        return match[1];
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom/client'
 import './index.css'
 import App from "./routes/App";
 
-import { BrowserRouter, Routes, Route, Link, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 
 const Messages = React.lazy(() => import("./routes/messages"));
 const Message = React.lazy(() => import("./routes/message"));
@@ -13,6 +13,7 @@ const Modules = React.lazy(() => import("./routes/course/modules"));
 const Assignments = React.lazy(() => import("./routes/course/assignments"));
 const Discussions = React.lazy(() => import('./routes/course/discussions'));
 const Announcements = React.lazy(() => import('./routes/course/announcements'));
+const Grades = React.lazy(() => import("./routes/course/grades"));
 const Announcement = React.lazy(() => import("./routes/course/individual/announcement"));
 const Assignment = React.lazy(() => import("./routes/course/individual/assignment"));
 const Discussion = React.lazy(() => import("./routes/course/individual/discussion"));
@@ -45,6 +46,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="/:course/assignments" element={<Suspense fallback={<Spin />} ><Assignments /></Suspense>} />
           <Route path="/:course/discussions" element={<Suspense fallback={<Spin />} ><Discussions /></Suspense>} />
           <Route path="/:course/announcements" element={<Suspense fallback={<Spin />} ><Announcements /></Suspense>} />
+          <Route path="/:course/grades" element={<Suspense fallback={<Spin />} ><Grades /></Suspense>} />
 
           <Route path="/:course/announcement/:announcement" element={<Suspense fallback={<Spin />} ><Announcement /></Suspense>} />
           <Route path="/:course/assignment/:assignment" element={<Suspense fallback={<Spin />} ><Assignment /></Suspense>} />

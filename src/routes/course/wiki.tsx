@@ -24,7 +24,7 @@ export default function Wiki() {
           }}
         ></div>
       ) : (
-        <Skeleton />
+        <Skeleton active />
       )}
     </Main>
   );

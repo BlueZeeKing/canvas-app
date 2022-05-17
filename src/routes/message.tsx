@@ -47,7 +47,6 @@ function App() {
   useAPI(
     `https://apsva.instructure.com/api/v1/conversations/${message}?include[]=participant_avatars`,
     (inData) => {
-      console.log(inData)
       setData(inData);
     },
     true
@@ -133,7 +132,7 @@ function App() {
               })}
             </div>
           ) : (
-            <Skeleton />
+            <Skeleton active />
           )}
         </Content>
       </Layout>

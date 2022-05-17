@@ -48,8 +48,6 @@ export default function Modules() {
     handleAPI
   );
 
-  console.log(next);
-
   return (
     <Main
       length={data.length}
@@ -69,7 +67,7 @@ export default function Modules() {
                       icon={faPenRuler}
                       name={item.title}
                       indent={item.indent}
-                      url={`/${course}/assignment/${item.content_id}`}
+                      url={`/${course}/assignment/${item.content_id}?id=${item.id}`}
                       id={item.id}
                       key={item.id}
                     />
@@ -80,7 +78,7 @@ export default function Modules() {
                       icon={faFile}
                       name={item.title}
                       indent={item.indent}
-                      url={`/${course}/file/${item.content_id}`}
+                      url={`/${course}/file/${item.content_id}?id=${item.id}`}
                       id={item.id}
                       key={item.id}
                     />
@@ -107,7 +105,7 @@ export default function Modules() {
                       icon={faNewspaper}
                       name={item.title}
                       indent={item.indent}
-                      url={`/${course}/page/${item.page_url}`}
+                      url={`/${course}/page/${item.page_url}?id=${item.id}`}
                       id={item.id}
                       key={item.id}
                     />
@@ -127,7 +125,7 @@ export default function Modules() {
           ))}
         </Menu>
       ) : (
-        <Skeleton />
+        <Skeleton active />
       )}
     </Main>
   );

@@ -41,7 +41,7 @@ export async function fetchData(
       notification.error({
         message: `Error: ${body.status}`,
         // @ts-expect-error
-        description: `An error occurred while fetching the data: ${body.data.error}`,
+        description: `An error occurred while fetching the data: ${body.data.errors.map((item) => item.message).join(", ")}`,
       });
     }
   } catch (err) {
