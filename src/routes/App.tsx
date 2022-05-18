@@ -132,7 +132,7 @@ function App() {
               )}
             />
           ) : (
-            <div className="m-3 w-full flex flex-row place-content-center">
+            <div className="p-3 w-full flex flex-row place-content-center">
               <Spin size="large" />
             </div>
           )}

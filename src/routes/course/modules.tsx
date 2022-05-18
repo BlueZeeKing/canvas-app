@@ -9,7 +9,7 @@ import {
 
 import Main from "../../../components/MainInfinite";
 import setItem from "../../../utils/breadcrumb";
-import { Skeleton, Menu, Spin } from "antd";
+import { Skeleton, Menu } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
 import useAPI, { fetchData } from "../../../utils/useInfiniteAPI";

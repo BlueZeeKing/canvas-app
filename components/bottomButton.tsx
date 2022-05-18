@@ -37,17 +37,37 @@ export default function BottomButtons() {
   if (searchParams.get("id") && body && body.items.length > 0) {
     return (
       <div className="flex flex-row m-3">
-        <Button onClick={() => body.items[0].prev.type == "ExternalUrl" ? open(body.items[0].prev.external_url) : ""}>
-          <a href={parseType(body.items[0].prev, course != null ? course : "")}>
-            Previous
-          </a>
-        </Button>
+        {
+          body.items[0].prev ?
+          <Button
+            onClick={() =>
+              body.items[0].prev.type == "ExternalUrl"
+                ? open(body.items[0].prev.external_url)
+                : ""
+            }
+          >
+            <a href={parseType(body.items[0].prev, course != null ? course : "")}>
+              Previous
+            </a>
+          </Button> : ""
+        }
         <div className="flex-grow"></div>
-        <Button onClick={() => body.items[0].next.type == "ExternalUrl" ? open(body.items[0].next.external_url) : ""}>
-          <a href={parseType(body.items[0].next, course != null ? course : "")}>
-            Next
-          </a>
-        </Button>
+        {
+          body.items[0].next ?
+          <Button
+            onClick={() =>
+              body.items[0].next.type == "ExternalUrl"
+                ? open(body.items[0].next.external_url)
+                : ""
+            }
+          >
+            <a
+              href={parseType(body.items[0].next, course != null ? course : "")}
+            >
+              Next
+            </a>
+          </Button> : ""
+        }
       </div>
     );
   } else {
