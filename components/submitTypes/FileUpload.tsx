@@ -2,14 +2,19 @@ import * as http from "@tauri-apps/api/http";
 import { basename } from "@tauri-apps/api/path";
 import { readBinaryFile } from "@tauri-apps/api/fs";
 import { open } from "@tauri-apps/api/dialog";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import { initializeApp } from "firebase/app";
 
 import { Card, Empty, Button, Tabs, List, notification, Alert } from "antd";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUpload, faXmark, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faGoogleDrive } from "@fortawesome/free-brands-svg-icons";
 
 import { useParams } from "react-router-dom";
 import getAPIKey from "../../utils/getAPIKey";
+
+import { GoogleAuthProvider, getAuth, signInWithRedirect, getRedirectResult } from "firebase/auth";
 
 const { TabPane } = Tabs;
 
@@ -18,6 +23,21 @@ interface File {
   id: number;
 }
 
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_KEY,
+  authDomain: "canvas-app-cd3aa.firebaseapp.com",
+  projectId: "canvas-app-cd3aa",
+  storageBucket: "canvas-app-cd3aa.appspot.com",
+  messagingSenderId: "174050746253",
+  appId: "1:174050746253:web:af0c8c15f6ebd773ae27c4",
+};
+
+const app = initializeApp(firebaseConfig);
+const provider = new GoogleAuthProvider();
+const auth = getAuth();
+
+provider.addScope("https://www.googleapis.com/auth/drive.metadata.readonly");
+
 export default function FileUpload(props: {
   item: string;
   setCurrent: (a: number) => void;
@@ -25,6 +45,17 @@ export default function FileUpload(props: {
 }) {
   const { course, assignment } = useParams();
   const [list, setList] = useState<File[]>([]);
+  const [authToken, setAuthToken] = useState <string>();
+
+  useEffect(() => {
+    getRedirectResult(auth).then((user) => {
+      if (user) {
+        setAuthToken(GoogleAuthProvider.credentialFromResult(user)?.accessToken);
+      }
+    });
+
+    window.gapi.load("picker", () => {});
+  }, [])
 
   return (
     <>
@@ -74,6 +105,30 @@ export default function FileUpload(props: {
             </List.Item>
           )}
         />
+        <Button
+          icon={<FontAwesomeIcon className="mr-2" icon={faGoogleDrive} />}
+          className="mr-3"
+          onClick={() => {
+            // @ts-expect-error
+            console.log(window.google.picker)
+            if (authToken) {
+              // @ts-expect-error
+              const picker = new window.google.picker.PickerBuilder()
+                .setDeveloperKey(import.meta.env.VITE_FIREBASE_KEY)
+                .setAppId("1:174050746253:web:af0c8c15f6ebd773ae27c4")
+                .setOAuthToken(authToken)
+                // @ts-expect-error
+                .addView(google.picker.ViewId.FOLDERS)
+                .setCallback((item: any) => console.log(item))
+                .build();
+              picker.setVisible(true);
+            } else {
+              signInWithRedirect(auth, provider)
+            };
+          }}
+        >
+          Select from Google
+        </Button>
         <Button
           icon={<FontAwesomeIcon className="mr-2" icon={faUpload} />}
           onClick={async () => {

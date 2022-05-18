@@ -10,7 +10,8 @@ import { Document, Page } from "react-pdf";
 import setItem from "../../../../utils/breadcrumb";
 import useAPI from "../../../../utils/useAPI";
 
-import FileViewer from "../../../../components/fileViewers/pdf";
+import PdfViewer from "../../../../components/fileViewers/pdf";
+import DocxViewer from "../../../../components/fileViewers/docx";
 
 import { pdfjs } from "react-pdf";
 
@@ -46,6 +47,8 @@ export default function File() {
     setUrl(body.public_url);
   });
 
+  console.log(data?.mime_class)
+
   return (
     <Main>
       {data ? (
@@ -75,7 +78,7 @@ export default function File() {
             )}
           </Text>
           <Divider />
-          {data.mime_class == "pdf" ? <FileViewer url={url} /> : data.mime_class == "image" ? <img src={url} /> : ""}
+          {data.mime_class == "pdf" ? <PdfViewer url={url} /> : data.mime_class == "image" ? <img src={url} /> : ""}
         </div>
       ) : (
         <Skeleton active />
@@ -83,3 +86,4 @@ export default function File() {
     </Main>
   );
 }
+// data.mime_class == "doc" ? <DocxViewer url={url} /> : 
