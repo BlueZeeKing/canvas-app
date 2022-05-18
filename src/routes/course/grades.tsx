@@ -7,23 +7,27 @@ import { Skeleton, Menu } from "antd";
 import { Link } from "react-router-dom";
 import useAPI, {fetchData} from "../../../utils/useInfiniteAPI";
 
-interface Discussion {
-  id: number,
-  title: string
+interface GradeItem {
+  id: number;
+  assignment_name: string;
+  assignment_id: string;
+  current_grade: string;
+  score: string;
 }
 
-export default function Announcements() {
+export default function Grades() {
   const { course } = useParams();
-  const [data, setData] = useState<Discussion[]>([]);
+  const [data, setData] = useState<GradeItem[]>([]);
 
-  setItem(2, "Announcements", `/${course}/announcements`);
+  setItem(2, "Grades", `/${course}/grades`);
 
-  function handleAPI(inData: Discussion[]) {
+  function handleAPI(inData: GradeItem[]) {
+    console.log(inData)
     setData(data.concat(inData));
   }
 
   const { next, setNext, complete, setComplete } = useAPI(
-    `https://apsva.instructure.com/api/v1/courses/${course}/discussion_topics?per_page=50&only_announcements=true`,
+    `https://apsva.instructure.com/api/v1/courses/${course}/grading_periods`,
     handleAPI
   );
 
@@ -35,11 +39,11 @@ export default function Announcements() {
     >
       {data ? (
         <Menu mode="inline">
-          <Menu.ItemGroup title="Announcements">
+          <Menu.ItemGroup title="Grades">
             {data.map((discussion) => (
               <Menu.Item key={discussion.id}>
                 <Link to={`/${course}/announcement/${discussion.id}`}>
-                  {discussion.title}
+                  {discussion.assignment_name} {discussion.score} {discussion.current_grade}
                 </Link>
               </Menu.Item>
             ))}

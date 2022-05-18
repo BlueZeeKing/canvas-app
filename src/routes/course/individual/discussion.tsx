@@ -46,8 +46,6 @@ export default function Discussion() {
   const [data, setData] = useState<Discussion>();
   const [entries, setEntries] = useState<Entry[]>([]);
 
-  setItem(3, "Discussion", `/${course}/discussion/${discussion}`);
-
   useAPI(
     `https://apsva.instructure.com/api/v1/courses/${course}/discussion_topics/${discussion}`,
     (body) => {
@@ -199,7 +197,7 @@ export default function Discussion() {
           }
         </div>
       ) : (
-        <Skeleton />
+        <Skeleton active />
       )}
     </Main>
   );

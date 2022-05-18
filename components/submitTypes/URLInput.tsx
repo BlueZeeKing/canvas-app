@@ -65,8 +65,6 @@ export default function TextInput(props: {
               }
             );
 
-            console.log(data);
-
             if (data.ok) {
               setText("");
               props.setSuccess(1);
