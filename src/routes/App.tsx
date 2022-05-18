@@ -92,7 +92,7 @@ function App() {
           {data ? (
             <List
               className="w-full overflow-x-hidden"
-              dataSource={data}
+              dataSource={data.filter(item => item.is_favorite)}
               grid={{
                 gutter: 16,
                 xs: 1,
