@@ -9,6 +9,8 @@ import { BrowserRouter, Routes, Route, useNavigate } from "react-router-dom";
 const Messages = React.lazy(() => import("./routes/messages"));
 const Message = React.lazy(() => import("./routes/message"));
 
+const Person = React.lazy(() => import("./routes/course/individual/person"));
+
 const Wiki = React.lazy(() => import("./routes/course/wiki"));
 const Syllabus = React.lazy(() => import("./routes/course/syllabus"));
 const Modules = React.lazy(() => import("./routes/course/modules"));
@@ -51,6 +53,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           <Route path="/:course/announcements" element={<Suspense fallback={<Spin />} ><Announcements /></Suspense>} />
           <Route path="/:course/grades" element={<Suspense fallback={<Spin />} ><Grades /></Suspense>} />
 
+          <Route path="/:course/person/:person" element={<Suspense fallback={<Spin />} ><Person /></Suspense>} />
           <Route path="/:course/announcement/:announcement" element={<Suspense fallback={<Spin />} ><Announcement /></Suspense>} />
           <Route path="/:course/assignment/:assignment" element={<Suspense fallback={<Spin />} ><Assignment /></Suspense>} />
           <Route path="/:course/discussion/:discussion" element={<Suspense fallback={<Spin />} ><Discussion /></Suspense>} />

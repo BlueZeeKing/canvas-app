@@ -30,7 +30,6 @@ export default function BottomButtons() {
     `https://apsva.instructure.com/api/v1/courses/${course}/module_item_sequence?asset_type=ModuleItem&asset_id=${searchParams.get("id")}`,
     (body) => {
       setBody(body)
-      console.log(body.items)
     }
   );
 
@@ -84,6 +83,9 @@ function parseType(item: Item, course: string) {
     return `/${course}/page/${item.page_url}?id=${item.id}`;
   } else if (item.type == "ExternalUrl") {
     return "javascript: void(0);";
+  } else if (item.type == "Discussion") {
+    return `/${course}/discussion/${item.content_id}?id=${item.id}`;
   }
-  return item.url;
+  console.log(item.type)
+  return "javascript: void(0);";
 }

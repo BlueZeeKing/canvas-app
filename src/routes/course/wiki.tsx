@@ -2,7 +2,7 @@ import { useParams } from "react-router"
 import { useState, useEffect } from "react"
 
 import Main from "../../../components/Main";
-import process from "../../../utils/htmlProcessor";
+import HTML from "../../../components/HTML";
 import setItem from "../../../utils/breadcrumb";
 import { Layout, Skeleton } from "antd";
 import useAPI from "../../../utils/useAPI";
@@ -18,11 +18,7 @@ export default function Wiki() {
   return (
     <Main>
       {data ? (
-        <div
-          dangerouslySetInnerHTML={{
-            __html: process(data),
-          }}
-        ></div>
+        <HTML html={data} />
       ) : (
         <Skeleton active />
       )}

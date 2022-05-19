@@ -5,6 +5,7 @@ import {
   faFile,
   faLink,
   faNewspaper,
+  faComment
 } from "@fortawesome/free-solid-svg-icons";
 
 import Main from "../../../components/MainInfinite";
@@ -106,6 +107,17 @@ export default function Modules() {
                       name={item.title}
                       indent={item.indent}
                       url={`/${course}/page/${item.page_url}?id=${item.id}`}
+                      id={item.id}
+                      key={item.id}
+                    />
+                  );
+                } else if (item.type == "Discussion") {
+                  return (
+                    <Item
+                      icon={faComment}
+                      name={item.title}
+                      indent={item.indent}
+                      url={`/${course}/discussion/${item.content_id}?id=${item.id}`}
                       id={item.id}
                       key={item.id}
                     />

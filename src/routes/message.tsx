@@ -48,8 +48,7 @@ function App() {
     `https://apsva.instructure.com/api/v1/conversations/${message}?include[]=participant_avatars`,
     (inData) => {
       setData(inData);
-    },
-    true
+    }
   );
 
   const author: Participant = data ? data.participants.filter((item) => item.id == data.messages[0].author_id)[0] : {name: "Unknown", avatar_url: "", pronouns: "", id: ""};
