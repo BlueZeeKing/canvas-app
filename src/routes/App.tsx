@@ -21,12 +21,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 interface Item {
-  name: string;
-  is_favorite: boolean;
-  course_code: string;
+  shortName: string;
+  isFavorited: boolean;
+  courseCode: string;
   id: number;
-  default_view: string;
-  public_description: string;
+  defaultView: string;
+  position: number;
 }
 
 const { Content, Sider } = Layout;
@@ -37,10 +37,11 @@ function App() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [apiKeyInput, setKey] = useState("")
 
-  const [next, setNext] = useState("https://apsva.instructure.com/api/v1/courses?enrollment_state=active&state=available&include[]=public_description&include[]=favorites");
+  const [next, setNext] = useState("https://apsva.instructure.com/api/v1/dashboard/dashboard_cards");
   const [complete, setComplete] = useState(false);
 
   function handleAPI(inData: Item[]) {
+    console.log(inData)
     setData(data.concat(inData));
   }
 
@@ -92,7 +93,7 @@ function App() {
           {data ? (
             <List
               className="w-full overflow-x-hidden"
-              dataSource={data.filter(item => item.is_favorite)}
+              dataSource={data.filter((item) => item.isFavorited).sort((item) => item.position)}
               grid={{
                 gutter: 16,
                 xs: 1,
@@ -106,27 +107,22 @@ function App() {
                 <List.Item>
                   <Card
                     onClick={() => {
-                      if (item.default_view == "wiki") {
-                        setIndex(1, item.name, `/${item.id}/wiki`);
+                      if (item.defaultView == "wiki") {
+                        setIndex(1, item.shortName, `/${item.id}/wiki`);
                         navigate(`/${item.id}/wiki`);
-                      } else if (item.default_view == "modules") {
-                        setIndex(1, item.name, `/${item.id}/modules`);
+                      } else if (item.defaultView == "modules") {
+                        setIndex(1, item.shortName, `/${item.id}/modules`);
                         navigate(`/${item.id}/modules`);
-                      } else if (item.default_view == "assignments") {
-                        setIndex(1, item.name, `/${item.id}/assignments`);
+                      } else if (item.defaultView == "assignments") {
+                        setIndex(1, item.shortName, `/${item.id}/assignments`);
                         navigate(`/${item.id}/assignments`);
                       }
                     }}
                     key={item.id}
-                    title={item.name}
+                    title={item.shortName}
                     className="h-40 cursor-pointer"
                   >
-                    <p>
-                      {!item.public_description ||
-                      item.public_description == ""
-                        ? item.course_code
-                        : item.public_description}
-                    </p>
+                    <p>{item.courseCode}</p>
                   </Card>
                 </List.Item>
               )}
