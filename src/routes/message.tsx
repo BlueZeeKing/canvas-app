@@ -55,7 +55,7 @@ function App() {
 
   return (
     <Layout className="h-screen">
-      <TopBar title="Canvas" />
+      <TopBar title="Burlap" />
       <Layout>
         <Sider>
           <Menu mode="inline" style={{ minHeight: "100%" }}>
