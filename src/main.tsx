@@ -70,7 +70,7 @@ function Error() {
   const navigate = useNavigate()
   return (
     <Layout>
-      <TopBar title="Burlap" />
+      <TopBar title="Canvas" />
       <Content className="p-3 !min-h-screen overflow-x-hidden">
         <Result
           status="404"

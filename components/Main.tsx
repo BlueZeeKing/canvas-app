@@ -26,7 +26,7 @@ export default function Main(props: { children: any }) {
 
   return (
     <Layout className="h-screen">
-      <TopBar title="Burlap" />
+      <TopBar title="Canvas" />
       <Layout className="h-full">
         <Sidebar />
         <Content className="h-full p-3 overflow-y-scroll">
