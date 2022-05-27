@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 import Main from "../../../../components/Main";
 import { Skeleton, Menu, Divider, Empty, Typography } from "antd";
-import process from "../../../../utils/htmlProcessor";
+import HTML from "../../../../components/HTML";
 import setItem from "../../../../utils/breadcrumb";
 import useAPI from "../../../../utils/useAPI";
 
@@ -52,11 +52,7 @@ export default function Page() {
             )}
           </Text>
           <Divider />
-          <div
-            dangerouslySetInnerHTML={{
-              __html: process(data.body),
-            }}
-          ></div>
+          <HTML html={data.body} />
         </div>
       ) : (
         <Skeleton active />

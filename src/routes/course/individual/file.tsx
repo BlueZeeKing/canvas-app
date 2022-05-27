@@ -1,12 +1,12 @@
 import { useParams } from "react-router";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { save } from "@tauri-apps/api/dialog"
+import { open } from "@tauri-apps/api/shell";
 import { writeBinaryFile } from "@tauri-apps/api/fs";
 
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
-import { Skeleton, Menu, Divider, Empty, Typography } from "antd";
-import { Document, Page } from "react-pdf";
+import { Skeleton, Divider, Typography } from "antd";
 import setItem from "../../../../utils/breadcrumb";
 import useAPI from "../../../../utils/useAPI";
 
@@ -56,7 +56,15 @@ export default function File() {
             <Center height="46.73px">
               <a onClick={() => {
                 save({defaultPath: data.display_name}).then((path) => {
-                  fetch(url).then(res => res.arrayBuffer()).then(file => writeBinaryFile({path: path, contents: new Uint8Array(file)}))
+                  fetch(url)
+                    .then((res) => res.arrayBuffer())
+                    .then((file) =>
+                      writeBinaryFile({
+                        path: path,
+                        contents: new Uint8Array(file),
+                      })
+                    )
+                    .then(() => open(path));
                 })
               }}>Click to download</a>
             </Center>

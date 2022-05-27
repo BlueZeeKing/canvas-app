@@ -2,12 +2,10 @@ import { useParams } from "react-router";
 import { useState } from "react";
 
 import Main from "../../../components/Main";
-import Center from "../../../components/Center";
-import process from "../../../utils/htmlProcessor";
-import { Skeleton, Avatar, Divider, Tooltip, Typography, Comment } from "antd";
-import { LikeOutlined, LikeFilled } from "@ant-design/icons";
+import { Skeleton, Divider, Typography } from "antd";
 import setItem from "../../../utils/breadcrumb";
 import useAPI from "../../../utils/useAPI";
+import HTML from "../../../components/HTML";
 
 const { Title } = Typography;
 
@@ -34,11 +32,7 @@ export default function Discussion() {
         <div>
           <Title>Syllabus</Title>
           <Divider />
-          <div
-            dangerouslySetInnerHTML={{
-              __html: process(data.syllabus_body),
-            }}
-          ></div>
+          <HTML html={data.syllabus_body} />
         </div>
       ) : (
         <Skeleton active />

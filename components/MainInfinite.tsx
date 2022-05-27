@@ -50,7 +50,7 @@ export default function Main(props: { children: any, length: number, handleNext:
             dataLength={props.length}
             next={props.handleNext}
             loader={
-              <div className="w-full m-3 flex flex-row place-content-center">
+              <div className="w-full p-3 flex flex-row place-content-center">
                 <Spin />
               </div>
             }

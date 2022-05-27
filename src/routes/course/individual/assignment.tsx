@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 
 import Main from "../../../../components/Main";
 import Center from "../../../../components/Center";
-import process from "../../../../utils/htmlProcessor";
+import HTML from "../../../../components/HTML";
 import { Skeleton, Alert, Divider, Empty, Typography, Steps, Button, Tabs} from "antd";
 import setItem from "../../../../utils/breadcrumb";
 
@@ -99,11 +99,7 @@ export default function Assignment() {
           {data.description != "" ? (
             <>
               <Divider orientation="left">Description</Divider>
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: process(data.description),
-                }}
-              ></div>
+              <HTML html={data.description} />
             </>
           ) : (
             ""

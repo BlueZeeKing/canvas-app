@@ -85,7 +85,7 @@ function App() {
             dataLength={data.length}
             next={() => fetchData(next, handleAPI, setNext, setComplete)}
             loader={
-              <div className="w-full m-3 flex flex-row place-content-center">
+              <div className="w-full p-3 flex flex-row place-content-center">
                 <Spin />
               </div>
             }
