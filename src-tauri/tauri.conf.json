@@ -56,7 +56,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "identifier": "Burlap",
+      "identifier": "dev.blueish.burlap",
       "longDescription": "",
       "macOS": {
         "entitlements": null,
