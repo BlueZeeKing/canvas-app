@@ -2,6 +2,8 @@ import { Layout } from "antd";
 import { Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSchool } from "@fortawesome/free-solid-svg-icons";
+// @ts-expect-error
+import Icon from "../src/icon.svg?component";
 
 const { Header } = Layout;
 
@@ -12,7 +14,7 @@ export default function TopBar(props: { title: string }) {
         <Link to="/" className="flex flex-row h-full pr-8">
           <div className="cursor-pointer flex flex-col h-full">
             <div className="flex-grow"></div>
-            <FontAwesomeIcon icon={faSchool} color="white" size="2x" />
+            <Icon className="fill-white" />
             <div className="flex-grow"></div>
           </div>
           <div className="ml-6 flex flex-col h-full justify-center">
